@@ -1,0 +1,70 @@
+# Projeto UFRN - Neural Regression
+# .gitignore para MLOps Best Practices
+
+# Dados (Evitar versionamento de datasets grandes)
+data/raw/*.csv
+data/processed/*.csv
+data/raw/*.txt
+data/processed/*.pkl
+
+# Modelos treinados (Checkpoints podem ser grandes)
+models/*.pth
+models/*.pt
+models/*.h5
+models/*.pkl
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs e Cache
+*.log
+logs/
+*.cache
+
+# Reports (manter apenas LaTeX, não PDFs)
+reports/*.pdf
+reports/*.aux
+reports/*.out
+reports/*.log
+reports/*.synctex.gz
+
