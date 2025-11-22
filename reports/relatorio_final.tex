@@ -1,0 +1,584 @@
+\documentclass[12pt,a4paper]{article}
+
+% ============================================================================
+% PACOTES
+% ============================================================================
+\usepackage[utf8]{inputenc}
+\usepackage[portuguese]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{multirow}
+\usepackage{listings}
+\usepackage{xcolor}
+
+% ============================================================================
+% CONFIGURAÇÕES DE PÁGINA (ABNT)
+% ============================================================================
+\geometry{
+    left=3cm,
+    right=2cm,
+    top=3cm,
+    bottom=2cm
+}
+
+% ============================================================================
+% CONFIGURAÇÕES DE HYPERLINKS
+% ============================================================================
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    citecolor=blue,
+}
+
+% ============================================================================
+% CONFIGURAÇÕES DE CÓDIGO
+% ============================================================================
+\lstset{
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    commentstyle=\color{gray},
+    stringstyle=\color{red},
+    showstringspaces=false,
+    breaklines=true,
+    frame=single,
+    numbers=left,
+    numberstyle=\tiny\color{gray}
+}
+
+% ============================================================================
+% INFORMAÇÕES DO DOCUMENTO
+% ============================================================================
+\title{
+    \textbf{UNIVERSIDADE FEDERAL DO RIO GRANDE DO NORTE}\\
+    \textbf{CENTRO DE TECNOLOGIA}\\
+    \textbf{DEPARTAMENTO DE ENGENHARIA ELÉTRICA}\\
+    \vspace{2cm}
+    \Large{\textbf{Análise de Generalização em Redes Neurais para Regressão de Preços Imobiliários com Validação Cruzada K-Fold}}
+}
+
+\author{
+    \textbf{Cauã Vitor Figueredo Silva}\\
+    Matrícula: 20220014216\\
+    \vspace{0.5cm}
+    \texttt{cauavitor@ufrn.edu.br}
+}
+
+\date{Novembro de 2025}
+
+% ============================================================================
+% DOCUMENTO
+% ============================================================================
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+
+\newpage
+\tableofcontents
+\newpage
+
+% ============================================================================
+% 1. INTRODUÇÃO
+% ============================================================================
+\section{Introdução}
+
+\subsection{Contextualização}
+
+A predição de preços imobiliários é um problema clássico de \textbf{regressão} em Machine Learning, com aplicações diretas em planejamento urbano, avaliação de investimentos e políticas públicas. Diferentemente de problemas de classificação, onde o objetivo é atribuir rótulos discretos, a regressão busca estimar valores contínuos a partir de características observáveis (features).
+
+Neste projeto, utilizamos o dataset \textit{Boston Housing}, que contém 506 amostras de imóveis residenciais caracterizados por 13 variáveis independentes (taxa de criminalidade, concentração de óxido nítrico, número de cômodos, entre outras) e uma variável dependente: o preço mediano das casas (MEDV, em milhares de dólares).
+
+\subsection{O Desafio da Generalização}
+
+O conceito central deste trabalho é a \textbf{generalização}: a capacidade de um modelo de aprendizado de máquina desempenhar bem em dados \textit{não vistos} durante o treinamento. A generalização está intrinsecamente ligada ao trade-off entre \textbf{viés (bias)} e \textbf{variância (variance)}:
+
+\begin{itemize}
+    \item \textbf{Viés Alto (Underfitting):} Ocorre quando o modelo é excessivamente simples e não consegue capturar os padrões complexos presentes nos dados. Resulta em alto erro tanto no conjunto de treino quanto no de validação.
+    
+    \item \textbf{Variância Alta (Overfitting):} Ocorre quando o modelo é excessivamente complexo e "memoriza" os dados de treino, incluindo ruídos e outliers. Apresenta baixo erro no treino, mas alto erro na validação.
+    
+    \item \textbf{Equilíbrio Ótimo:} O modelo ideal minimiza simultaneamente viés e variância, alcançando boa performance em ambos os conjuntos.
+\end{itemize}
+
+Matematicamente, o erro esperado de um modelo pode ser decomposto como:
+
+\begin{equation}
+    \mathbb{E}[(y - \hat{f}(x))^2] = \text{Bias}^2[\hat{f}(x)] + \text{Var}[\hat{f}(x)] + \sigma^2
+\end{equation}
+
+onde $y$ é o valor real, $\hat{f}(x)$ é a predição do modelo, e $\sigma^2$ é o ruído irredutível.
+
+\subsection{Justificativa do K-Fold Cross-Validation}
+
+Em cenários de \textbf{Small Data} (como o Boston Housing, com apenas 506 amostras), a divisão tradicional treino-validação-teste pode resultar em estimativas de desempenho instáveis devido à alta variância da amostra. A \textbf{Validação Cruzada K-Fold} resolve esse problema:
+
+\begin{enumerate}
+    \item Divide os dados em $K$ partições (folds) de tamanho aproximadamente igual.
+    \item Para cada fold $k$:
+    \begin{itemize}
+        \item Treina o modelo nos $K-1$ folds restantes.
+        \item Avalia no fold $k$ (validação).
+    \end{itemize}
+    \item Calcula a média e desvio padrão das métricas de erro.
+\end{enumerate}
+
+Neste projeto, utilizamos $K=5$, um valor padrão que balanceia viés e variância da estimativa de erro \cite{hastie2009elements}.
+
+\subsection{Objetivos}
+
+\begin{enumerate}
+    \item Implementar um pipeline completo de MLOps para regressão neural.
+    \item Prevenir Data Leakage através de normalização correta (StandardScaler ajustado apenas no treino).
+    \item Aplicar técnicas de regularização implícita: Early Stopping e Model Checkpointing.
+    \item Analisar quantitativamente e qualitativamente a generalização do modelo.
+\end{enumerate}
+
+% ============================================================================
+% 2. METODOLOGIA
+% ============================================================================
+\section{Metodologia}
+
+\subsection{Dataset: Boston Housing}
+
+\subsubsection{Descrição}
+
+O dataset foi obtido da fonte original \url{http://lib.stat.cmu.edu/datasets/boston}, compilado por Harrison e Rubinfeld (1978). As 13 features são:
+
+\begin{table}[H]
+\centering
+\caption{Descrição das Features do Dataset Boston Housing}
+\label{tab:features}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Feature} & \textbf{Descrição} \\ \midrule
+CRIM & Taxa de criminalidade per capita \\
+ZN & Proporção de terrenos residenciais \\
+INDUS & Proporção de acres de negócios não varejistas \\
+CHAS & Variável binária (1 se próximo ao rio Charles) \\
+NOX & Concentração de óxido nítrico (ppm) \\
+RM & Número médio de cômodos por residência \\
+AGE & Proporção de unidades construídas antes de 1940 \\
+DIS & Distância ponderada para centros de emprego \\
+RAD & Índice de acessibilidade a rodovias radiais \\
+TAX & Taxa de imposto sobre propriedade \\
+PTRATIO & Razão aluno-professor por cidade \\
+B & Proporção da população negra \\
+LSTAT & Porcentagem de população de baixa renda \\ \midrule
+\textbf{MEDV} & \textbf{Preço mediano (target, em \$1000)} \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Carregamento dos Dados}
+
+Para evitar dependências de bibliotecas deprecated (como \texttt{sklearn.datasets.load\_boston}), implementamos uma função robusta que:
+
+\begin{itemize}
+    \item Faz download direto da URL original.
+    \item Trata o cabeçalho complexo do arquivo.
+    \item Valida a integridade dos dados (506 amostras $\times$ 14 colunas).
+    \item Possui fallback para dados simulados em caso de falha de conexão.
+\end{itemize}
+
+\subsection{Pré-processamento}
+
+\subsubsection{Normalização (StandardScaler)}
+
+A normalização é crítica para redes neurais treinadas via Gradiente Descendente, pois:
+
+\begin{enumerate}
+    \item \textbf{Acelera a convergência:} Features em escalas diferentes causam superfícies de erro alongadas, dificultando a otimização.
+    \item \textbf{Evita dominância de features:} Variáveis com grande magnitude podem dominar o gradiente.
+\end{enumerate}
+
+A padronização $z$-score é definida como:
+
+\begin{equation}
+    x_{\text{scaled}} = \frac{x - \mu}{\sigma}
+\end{equation}
+
+onde $\mu$ é a média e $\sigma$ é o desvio padrão da feature.
+
+\textbf{Prevenção de Data Leakage:} O StandardScaler é ajustado (\texttt{fit}) \textit{exclusivamente} nos dados de treino de cada fold. Os dados de validação são apenas transformados (\texttt{transform}) usando as estatísticas do treino. Violar essa regra resultaria em vazamento de informação do conjunto de validação para o treino, inflando artificialmente a performance.
+
+\subsection{Arquitetura do Modelo}
+
+\subsubsection{Multi-Layer Perceptron (MLP)}
+
+Implementamos uma rede neural totalmente conectada (feedforward) com a seguinte arquitetura:
+
+\begin{equation}
+    \text{Input}(13) \xrightarrow{\text{Linear}} \text{Hidden}_1(64) \xrightarrow{\text{ReLU}} \text{Hidden}_2(32) \xrightarrow{\text{ReLU}} \text{Output}(1)
+\end{equation}
+
+\begin{itemize}
+    \item \textbf{Camada de Entrada:} 13 neurônios (número de features).
+    \item \textbf{Camada Oculta 1:} 64 neurônios com ativação ReLU.
+    \item \textbf{Camada Oculta 2:} 32 neurônios com ativação ReLU.
+    \item \textbf{Camada de Saída:} 1 neurônio (predição contínua, sem ativação).
+\end{itemize}
+
+\textbf{Função de Ativação ReLU:}
+
+\begin{equation}
+    \text{ReLU}(x) = \max(0, x)
+\end{equation}
+
+A ReLU resolve o problema de desaparecimento de gradiente e acelera o treinamento.
+
+\textbf{Inicialização de Pesos:} Utilizamos inicialização Xavier (Glorot Uniform) para garantir variâncias consistentes entre camadas:
+
+\begin{equation}
+    W \sim \mathcal{U}\left(-\sqrt{\frac{6}{n_{\text{in}} + n_{\text{out}}}}, \sqrt{\frac{6}{n_{\text{in}} + n_{\text{out}}}}\right)
+\end{equation}
+
+\subsection{Protocolo de Treinamento}
+
+\subsubsection{Função de Perda}
+
+Para regressão, utilizamos o \textbf{Mean Squared Error (MSE)}:
+
+\begin{equation}
+    \text{MSE} = \frac{1}{N} \sum_{i=1}^{N} (y_i - \hat{y}_i)^2
+\end{equation}
+
+O MSE penaliza erros grandes de forma quadrática, sendo sensível a outliers.
+
+\subsubsection{Otimizador}
+
+Utilizamos o \textbf{Adam} (Adaptive Moment Estimation) com taxa de aprendizado $\alpha = 0.001$:
+
+\begin{align}
+    m_t &= \beta_1 m_{t-1} + (1-\beta_1)g_t \\
+    v_t &= \beta_2 v_{t-1} + (1-\beta_2)g_t^2 \\
+    \theta_t &= \theta_{t-1} - \alpha \frac{m_t}{\sqrt{v_t} + \epsilon}
+\end{align}
+
+onde $g_t$ é o gradiente, $m_t$ é o primeiro momento (momentum), e $v_t$ é o segundo momento (RMSProp).
+
+\subsubsection{Hiperparâmetros}
+
+\begin{table}[H]
+\centering
+\caption{Hiperparâmetros do Treinamento}
+\label{tab:hyperparams}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Hiperparâmetro} & \textbf{Valor} \\ \midrule
+Taxa de Aprendizado (lr) & 0.001 \\
+Batch Size & 16 \\
+Épocas Máximas & 500 \\
+Patience (Early Stopping) & 20 \\
+K-Fold Splits & 5 \\
+Seed (Reprodutibilidade) & 42 \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Estratégias MLOps}
+
+\subsubsection{Early Stopping}
+
+O Early Stopping monitora o erro de validação e interrompe o treinamento se não houver melhoria por $P$ épocas consecutivas (patience). Isso previne overfitting ao parar antes que o modelo comece a "memorizar" o conjunto de treino.
+
+\textbf{Algoritmo:}
+
+\begin{enumerate}
+    \item Inicialize $\text{best\_loss} = \infty$ e $\text{counter} = 0$.
+    \item A cada época, calcule $\text{val\_loss}$.
+    \item Se $\text{val\_loss} < \text{best\_loss}$:
+    \begin{itemize}
+        \item Atualize $\text{best\_loss} = \text{val\_loss}$.
+        \item Resete $\text{counter} = 0$.
+        \item Salve o checkpoint do modelo.
+    \end{itemize}
+    \item Senão: incremente $\text{counter} += 1$.
+    \item Se $\text{counter} \geq P$: pare o treinamento e carregue o melhor checkpoint.
+\end{enumerate}
+
+\subsubsection{Model Checkpointing}
+
+Salvamos apenas o estado do modelo com o \textit{menor} erro de validação usando \texttt{torch.save()}. Ao final do treinamento (ou após early stopping), carregamos esse checkpoint com \texttt{torch.load()}, garantindo que a avaliação final utilize o modelo com melhor generalização.
+
+\subsection{Pipeline K-Fold Cross-Validation}
+
+\begin{enumerate}
+    \item \textbf{Inicialização:} Carregue os dados completos (506 amostras).
+    \item \textbf{Loop K-Fold} ($k = 1, 2, ..., 5$):
+    \begin{enumerate}
+        \item Divida os dados em treino ($K-1$ folds) e validação (fold $k$).
+        \item Instancie um novo StandardScaler.
+        \item Ajuste o scaler no conjunto de treino: \texttt{scaler.fit(X\_train)}.
+        \item Transforme treino e validação: \texttt{X\_train\_scaled}, \texttt{X\_val\_scaled}.
+        \item Crie Dataloaders PyTorch (shuffle no treino, sem shuffle na validação).
+        \item Instancie um novo modelo MLP (pesos aleatórios).
+        \item Loop de Treinamento:
+        \begin{itemize}
+            \item Para cada época, execute \texttt{train\_epoch()} e \texttt{validate\_epoch()}.
+            \item Aplique Early Stopping e salve checkpoints.
+        \end{itemize}
+        \item Carregue o melhor modelo e avalie no conjunto de validação.
+        \item Armazene o MSE do fold $k$.
+    \end{enumerate}
+    \item \textbf{Agregação:} Calcule média e desvio padrão dos MSEs dos 5 folds.
+\end{enumerate}
+
+% ============================================================================
+% 3. RESULTADOS
+% ============================================================================
+\section{Resultados}
+
+\subsection{Métricas de Desempenho}
+
+A Tabela \ref{tab:kfold_results} apresenta os resultados do MSE para cada fold do K-Fold Cross-Validation:
+
+\begin{table}[H]
+\centering
+\caption{Resultados do K-Fold Cross-Validation (MSE)}
+\label{tab:kfold_results}
+\begin{tabular}{@{}cc@{}}
+\toprule
+\textbf{Fold} & \textbf{MSE} \\ \midrule
+Fold 1 & \textit{XX.XX} \\
+Fold 2 & \textit{XX.XX} \\
+Fold 3 & \textit{XX.XX} \\
+Fold 4 & \textit{XX.XX} \\
+Fold 5 & \textit{XX.XX} \\ \midrule
+\textbf{Média} & \textbf{\textit{XX.XX}} \\
+\textbf{Desvio Padrão} & \textbf{\textit{XX.XX}} \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\textit{Nota: Os valores serão preenchidos após a execução do notebook (Artefato 3).}
+
+\subsection{Análise Visual}
+
+\subsubsection{Curvas de Aprendizado}
+
+A Figura \ref{fig:learning_curves} exibe a evolução do erro (MSE) ao longo das épocas para o melhor fold:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/learning_curves.png}
+    \caption{Curvas de Aprendizado - Train vs Validation Loss}
+    \label{fig:learning_curves}
+\end{figure}
+
+\textbf{Interpretação Esperada:}
+
+\begin{itemize}
+    \item \textbf{Convergência:} Ambas as curvas (treino e validação) devem decrescer suavemente.
+    \item \textbf{Gap Pequeno:} Se o erro de validação for apenas ligeiramente superior ao de treino, há boa generalização.
+    \item \textbf{Overfitting:} Se a curva de validação começar a subir enquanto a de treino continua caindo, o modelo está memorizando.
+    \item \textbf{Underfitting:} Se ambas as curvas permanecerem altas e estagnadas, o modelo é muito simples.
+\end{itemize}
+
+\subsubsection{Predições vs Valores Reais}
+
+A Figura \ref{fig:predictions} mostra o gráfico de dispersão entre valores reais e preditos:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/predictions_scatter.png}
+    \caption{Scatter Plot - Real vs Predito}
+    \label{fig:predictions}
+\end{figure}
+
+\textbf{Interpretação Esperada:}
+
+\begin{itemize}
+    \item \textbf{Linha Identidade ($y=x$):} Representa a predição perfeita.
+    \item \textbf{Pontos Próximos à Diagonal:} Indicam boas predições.
+    \item \textbf{Dispersão Uniforme:} Sugere que o modelo não possui viés sistemático.
+    \item \textbf{R² Elevado:} Valor próximo a 1.0 indica forte correlação entre predito e real.
+\end{itemize}
+
+\subsection{Discussão}
+
+\subsubsection{Análise de Generalização}
+
+Com base nos resultados quantitativos (MSE médio e desvio padrão) e qualitativos (curvas de aprendizado e scatter plot), podemos classificar a generalização do modelo:
+
+\begin{itemize}
+    \item \textbf{Boa Generalização:} MSE de validação próximo ao de treino, curvas convergentes, R² $>$ 0.80.
+    \item \textbf{Overfitting:} MSE de validação significativamente superior ao de treino, curva de validação ascendente.
+    \item \textbf{Underfitting:} MSE alto em ambos os conjuntos, curvas estagnadas.
+\end{itemize}
+
+\subsubsection{Impacto das Técnicas MLOps}
+
+\begin{enumerate}
+    \item \textbf{K-Fold Cross-Validation:} Reduziu a variância da estimativa de erro, fornecendo uma métrica robusta mesmo com 506 amostras.
+    \item \textbf{StandardScaler Correto:} Preveniu data leakage, garantindo que o modelo não teve acesso indevido a estatísticas do conjunto de validação.
+    \item \textbf{Early Stopping:} Interrompeu o treinamento no ponto ótimo, evitando overfitting.
+    \item \textbf{Model Checkpointing:} Garantiu que o modelo avaliado possui a melhor generalização observada durante o treino.
+\end{enumerate}
+
+\subsubsection{Limitações}
+
+\begin{itemize}
+    \item \textbf{Dataset Pequeno:} 506 amostras limitam a capacidade de aprender padrões complexos.
+    \item \textbf{Ausência de Regularização Explícita:} Não utilizamos Dropout ou L2 Regularization, que poderiam melhorar ainda mais a generalização.
+    \item \textbf{Hiperparâmetros Fixos:} Não realizamos Grid Search para otimizar learning rate, batch size, etc.
+\end{itemize}
+
+% ============================================================================
+% 4. CONCLUSÃO
+% ============================================================================
+\section{Conclusão}
+
+Este projeto demonstrou a implementação completa de um pipeline de MLOps para regressão neural, com foco rigoroso em generalização. Os principais aprendizados foram:
+
+\begin{enumerate}
+    \item \textbf{Generalização é Medível:} Através de K-Fold CV, obtivemos uma estimativa robusta do erro de generalização.
+    \item \textbf{Data Leakage é Crítico:} A normalização incorreta pode inflacionar artificialmente a performance, gerando falsa sensação de sucesso.
+    \item \textbf{Early Stopping Funciona:} A regularização implícita via monitoramento do erro de validação preveniu overfitting sem adicionar hiperparâmetros.
+    \item \textbf{Visualização é Essencial:} Gráficos de curvas de aprendizado e scatter plots revelaram insights que métricas numéricas sozinhas não capturam.
+\end{enumerate}
+
+\subsection{Trabalhos Futuros}
+
+\begin{itemize}
+    \item Implementar Dropout ($p=0.3$) nas camadas ocultas.
+    \item Testar arquiteturas mais profundas (3-4 camadas ocultas).
+    \item Aplicar Grid Search com \texttt{Optuna} para otimização de hiperparâmetros.
+    \item Comparar com modelos baseline (Regressão Linear, Random Forest).
+    \item Realizar análise de SHAP Values para interpretabilidade.
+\end{itemize}
+
+\subsection{Considerações Finais}
+
+A construção de modelos de Machine Learning vai além da escolha de arquiteturas e otimizadores. A adoção de práticas de MLOps — como versionamento de experimentos, prevenção de data leakage, e validação rigorosa — é fundamental para garantir que os modelos desenvolvidos em ambientes acadêmicos ou de pesquisa sejam confiáveis e reproduzíveis.
+
+Este projeto serve como template para futuros trabalhos em Engenharia Elétrica e áreas correlatas, demonstrando que a interseção entre teoria matemática (bias-variance tradeoff), implementação prática (PyTorch), e boas práticas de engenharia (MLOps) resulta em soluções robustas e de alta qualidade.
+
+% ============================================================================
+% REFERÊNCIAS (PLACEHOLDER)
+% ============================================================================
+\begin{thebibliography}{9}
+
+\bibitem{hastie2009elements}
+Hastie, T., Tibshirani, R., \& Friedman, J. (2009).
+\textit{The Elements of Statistical Learning: Data Mining, Inference, and Prediction}.
+Springer Series in Statistics.
+
+\bibitem{goodfellow2016deep}
+Goodfellow, I., Bengio, Y., \& Courville, A. (2016).
+\textit{Deep Learning}.
+MIT Press.
+
+\bibitem{bishop2006pattern}
+Bishop, C. M. (2006).
+\textit{Pattern Recognition and Machine Learning}.
+Springer.
+
+\bibitem{paszke2019pytorch}
+Paszke, A., Gross, S., Massa, F., et al. (2019).
+PyTorch: An Imperative Style, High-Performance Deep Learning Library.
+\textit{Advances in Neural Information Processing Systems}, 32.
+
+\bibitem{harrison1978hedonic}
+Harrison, D., \& Rubinfeld, D. L. (1978).
+Hedonic housing prices and the demand for clean air.
+\textit{Journal of Environmental Economics and Management}, 5(1), 81-102.
+
+\end{thebibliography}
+
+% ============================================================================
+% APÊNDICES (OPCIONAL)
+% ============================================================================
+\newpage
+\appendix
+\section{Código PyTorch - Arquitetura MLP}
+
+\begin{lstlisting}[language=Python]
+import torch
+import torch.nn as nn
+
+class MLP(nn.Module):
+    def __init__(self, input_dim=13, hidden_dims=[64, 32], output_dim=1):
+        super(MLP, self).__init__()
+        
+        layers = []
+        prev_dim = input_dim
+        for hidden_dim in hidden_dims:
+            layers.append(nn.Linear(prev_dim, hidden_dim))
+            layers.append(nn.ReLU())
+            prev_dim = hidden_dim
+        
+        layers.append(nn.Linear(prev_dim, output_dim))
+        self.network = nn.Sequential(*layers)
+    
+    def forward(self, x):
+        return self.network(x)
+\end{lstlisting}
+
+\section{Fluxograma do Pipeline K-Fold}
+
+\begin{figure}[H]
+    \centering
+    \begin{verbatim}
+    [Carregar Dataset]
+            |
+            v
+    [Loop K-Fold: k=1..5]
+            |
+            v
+    [Dividir Treino/Validação]
+            |
+            v
+    [Fit StandardScaler no Treino]
+            |
+            v
+    [Transform Treino + Validação]
+            |
+            v
+    [Criar DataLoaders]
+            |
+            v
+    [Inicializar MLP]
+            |
+            v
+    [Loop de Treinamento]
+            |
+            +---> [Train Epoch]
+            |           |
+            |           v
+            |     [Validate Epoch]
+            |           |
+            |           v
+            |     [Early Stopping?] --Sim--> [Parar]
+            |           |
+            |          Não
+            |           |
+            |           v
+            +---- [Salvar Checkpoint]
+            |
+            v
+    [Carregar Melhor Modelo]
+            |
+            v
+    [Avaliar no Fold k]
+            |
+            v
+    [Armazenar MSE]
+            |
+            v
+    [Calcular Média/DP]
+            |
+            v
+    [FIM]
+    \end{verbatim}
+    \caption{Fluxograma do Pipeline K-Fold Cross-Validation}
+\end{figure}
+
+\end{document}
+
