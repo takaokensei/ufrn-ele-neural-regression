@@ -11,3 +11,4 @@ seaborn==0.12.2
 jupyter==1.0.0
 notebook==6.5.4
 requests==2.31.0
+optuna==3.3.0  # Bayesian Optimization para Hyperparameter Tuning
