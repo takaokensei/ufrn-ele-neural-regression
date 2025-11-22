@@ -10,36 +10,44 @@ from typing import List
 
 class MLP(nn.Module):
     """
-    Multi-Layer Perceptron para Regressão
+    Multi-Layer Perceptron para Regressão com Regularização
     
-    Arquitetura:
-        Input (13) -> Hidden1 (64, ReLU) -> Hidden2 (32, ReLU) -> Output (1)
+    Arquitetura (com Dropout):
+        Input (13) -> Hidden1 (64, ReLU, Dropout) -> Hidden2 (32, ReLU, Dropout) -> Output (1)
+    
+    Dropout é aplicado após cada camada oculta para prevenir overfitting.
     """
     
     def __init__(
         self,
         input_dim: int = 13,
         hidden_dims: List[int] = [64, 32],
-        output_dim: int = 1
+        output_dim: int = 1,
+        dropout_rate: float = 0.3
     ):
         """
         Args:
             input_dim: Número de features de entrada
             hidden_dims: Lista com dimensões das camadas ocultas
             output_dim: Dimensão da saída (1 para regressão)
+            dropout_rate: Taxa de dropout (0.0 a 1.0). Padrão: 0.3 (30%)
         """
         super(MLP, self).__init__()
         
+        self.dropout_rate = dropout_rate
         layers = []
         
-        # Camadas ocultas
+        # Camadas ocultas com Dropout
         prev_dim = input_dim
         for hidden_dim in hidden_dims:
             layers.append(nn.Linear(prev_dim, hidden_dim))
             layers.append(nn.ReLU())
+            # Adicionar Dropout após cada ReLU (exceto na última camada)
+            if dropout_rate > 0.0:
+                layers.append(nn.Dropout(p=dropout_rate))
             prev_dim = hidden_dim
         
-        # Camada de saída
+        # Camada de saída (sem Dropout e sem ativação para regressão)
         layers.append(nn.Linear(prev_dim, output_dim))
         
         self.network = nn.Sequential(*layers)
