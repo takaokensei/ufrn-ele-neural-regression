@@ -1,91 +1,260 @@
-\documentclass[12pt,a4paper]{article}
+\documentclass[12pt,a4paper,twoside]{article}
 
-% ============================================================================
-% PACOTES
-% ============================================================================
+%----------------------------------------------------------------------------------------
+% CODIFICAÇÃO E LINGUAGEM
+%----------------------------------------------------------------------------------------
 \usepackage[utf8]{inputenc}
-\usepackage[portuguese]{babel}
 \usepackage[T1]{fontenc}
-\usepackage{graphicx}
+\usepackage[brazilian]{babel}
+\usepackage[tracking=true]{microtype}
+
+%----------------------------------------------------------------------------------------
+% FONTES (pdfLaTeX Compatible)
+%----------------------------------------------------------------------------------------
+% Tenta usar fontes bonitas se disponíveis, senão usa padrão
+\IfFileExists{CormorantGaramond.sty}{\usepackage{CormorantGaramond}}{\usepackage{ebgaramond}}
+\usepackage[defaultsans]{lato}
+\usepackage{FiraMono}
+
+%----------------------------------------------------------------------------------------
+% MATEMÁTICA E CIÊNCIA
+%----------------------------------------------------------------------------------------
 \usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage{bm}
 \usepackage{amssymb}
-\usepackage{booktabs}
-\usepackage{float}
-\usepackage{geometry}
-\usepackage{hyperref}
+\usepackage{siunitx}
+
+%----------------------------------------------------------------------------------------
+% LAYOUT E GEOMETRIA
+%----------------------------------------------------------------------------------------
+\usepackage[a4paper,
+    left=3cm, right=2cm, % Margens ABNT do seu original
+    top=3cm, bottom=2cm,
+    headheight=22pt, headsep=20pt,
+    footskip=40pt]{geometry}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{setspace}
+
+%----------------------------------------------------------------------------------------
+% GRÁFICOS E FIGURAS
+%----------------------------------------------------------------------------------------
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{positioning, shadows, circuits.ee.IEC, calc}
 \usepackage{caption}
 \usepackage{subcaption}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{eso-pic}
+\usepackage[outline]{contour}
+
+%----------------------------------------------------------------------------------------
+% TABELAS E LISTAS
+%----------------------------------------------------------------------------------------
+\usepackage{booktabs}
+\usepackage{threeparttable}
+\usepackage{array}
+\usepackage{longtable}
 \usepackage{multirow}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{lettrine}
+
+%----------------------------------------------------------------------------------------
+% CÓDIGO (LISTINGS)
+%----------------------------------------------------------------------------------------
 \usepackage{listings}
-\usepackage{xcolor}
-
-% ============================================================================
-% CONFIGURAÇÕES DE PÁGINA (ABNT)
-% ============================================================================
-\geometry{
-    left=3cm,
-    right=2cm,
-    top=3cm,
-    bottom=2cm
-}
-
-% ============================================================================
-% CONFIGURAÇÕES DE HYPERLINKS
-% ============================================================================
-\hypersetup{
-    colorlinks=true,
-    linkcolor=blue,
-    filecolor=magenta,      
-    urlcolor=cyan,
-    citecolor=blue,
-}
-
-% ============================================================================
-% CONFIGURAÇÕES DE CÓDIGO
-% ============================================================================
 \lstset{
-    basicstyle=\ttfamily\small,
-    keywordstyle=\color{blue},
+    basicstyle=\ttfamily\small\color{secondary},
+    keywordstyle=\color{primary},
     commentstyle=\color{gray},
-    stringstyle=\color{red},
+    stringstyle=\color{accent},
     showstringspaces=false,
     breaklines=true,
     frame=single,
     numbers=left,
-    numberstyle=\tiny\color{gray}
+    numberstyle=\tiny\color{gray},
+    rulecolor=\color{primary!50},
+    backgroundcolor=\color{lightgray!30}
 }
 
-% ============================================================================
-% INFORMAÇÕES DO DOCUMENTO
-% ============================================================================
-\title{
-    \textbf{UNIVERSIDADE FEDERAL DO RIO GRANDE DO NORTE}\\
-    \textbf{CENTRO DE TECNOLOGIA}\\
-    \textbf{DEPARTAMENTO DE ENGENHARIA ELÉTRICA}\\
-    \vspace{2cm}
-    \Large{\textbf{Análise de Generalização em Redes Neurais para Regressão de Preços Imobiliários com Validação Cruzada K-Fold}}
+%----------------------------------------------------------------------------------------
+% CAIXAS ESPECIAIS
+%----------------------------------------------------------------------------------------
+\usepackage{tcolorbox}
+\tcbuselibrary{theorems, skins, breakable}
+
+%----------------------------------------------------------------------------------------
+% REFERÊNCIAS E LINKS
+%----------------------------------------------------------------------------------------
+\usepackage[hidelinks, pdfencoding=auto, unicode]{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=primary,
+    filecolor=magenta,      
+    urlcolor=engineering,
+    citecolor=accent,
 }
 
-\author{
-    \textbf{Cauã Vitor Figueredo Silva}\\
-    Matrícula: 20220014216\\
-    \vspace{0.5cm}
-    \texttt{cauavitor@ufrn.edu.br}
+%----------------------------------------------------------------------------------------
+% DEFINIÇÃO DE CORES
+%----------------------------------------------------------------------------------------
+\definecolor{primary}{HTML}{1e3a8a}
+\definecolor{secondary}{HTML}{1f2937}
+\definecolor{accent}{HTML}{dc2626}
+\definecolor{lightgray}{HTML}{f8fafc}
+\definecolor{darkgray}{HTML}{374151}
+\definecolor{engineering}{HTML}{0369a1}
+\definecolor{lightblue}{HTML}{3b82f6}
+
+%----------------------------------------------------------------------------------------
+% COMANDOS PERSONALIZADOS
+%----------------------------------------------------------------------------------------
+\contourlength{0.04em}
+\newcommand*\splitdot{\hspace{0.2em}\tikz[baseline=-0.3ex]{\fill[accent] (0,0) arc (0:180:0.25ex) -- cycle; \fill[lightblue] (0,0) arc (0:-180:0.25ex) -- cycle;}\hspace{0.2em}}
+
+% Caixa futurista para subtítulo
+\newtcolorbox{futuristicbox}[1][]{
+  enhanced, colback=secondary, colframe=primary!70, boxrule=0pt, arc=0pt,
+  borderline west={1pt}{0pt}{primary!80},
+  borderline east={1pt}{0pt}{accent!80},
+  fontupper=\bfseries\color{white},
+  halign=center, valign=center, boxsep=10pt, #1
 }
 
-\date{Novembro de 2025}
+% Caixa de Destaque (Highlight Box)
+\newtcolorbox{highlightbox}[1][]{ 
+    enhanced, colback=lightgray, colframe=primary, boxrule=1pt, arc=5pt, 
+    drop shadow={opacity=0.4, shadow xshift=2pt, shadow yshift=-2pt, fill=darkgray!80}, 
+    breakable, coltitle=white, fonttitle=\bfseries\small\sffamily, colbacktitle=primary, 
+    attach boxed title to top left={xshift=12pt, yshift=-5pt}, 
+    boxed title style={arc=3pt, boxrule=0.5pt, drop shadow={opacity=0.4, shadow xshift=1pt, shadow yshift=-1pt, fill=darkgray}}, 
+    left=10pt, right=10pt, top=12pt, bottom=8pt, #1 
+}
 
-% ============================================================================
+% Divisor de seção
+\newcommand{\sectiondivider}{\begin{center}\textcolor{primary!50}{\rule{0.6\textwidth}{1pt}}\end{center}}
+
+% Borda da Página
+\newcommand{\PageBorder}{%
+\AddToShipoutPictureBG*{%
+  \begin{tikzpicture}[remember picture, overlay]
+    \draw[secondary, line width=0.4pt] ([xshift=1.5cm,yshift=-1.5cm]current page.north west) rectangle ([xshift=-1.5cm,yshift=1.5cm]current page.south east);
+    \draw[primary!80, line width=0.8pt] ([xshift=1.6cm,yshift=-1.6cm]current page.north west) rectangle ([xshift=-1.6cm,yshift=1.6cm]current page.south east);
+  \end{tikzpicture}}%
+}
+\newcommand{\NoPageBorder}{\ClearShipoutPictureBG}
+\newcommand{\RestorePageBorder}{\PageBorder}
+
+% Formatação de Seções
+\titleformat{\section}{\Large\bfseries\sffamily\color{primary}}{\thesection}{1em}{}[\vspace{-0.5em}\textcolor{accent}{\titlerule[0.8pt]}]
+\titleformat{\subsection}{\large\bfseries\sffamily\color{secondary}}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries\sffamily\color{darkgray}}{\thesubsubsection}{1em}{}
+
+% Espaçamento e Listas
+\setstretch{1.15} 
+\setlength{\parindent}{1.2em} 
+\setlength{\parskip}{0.5em}
+\setlist[itemize]{leftmargin=1.5em, itemsep=0.2em}
+\setlist[enumerate]{leftmargin=1.5em, itemsep=0.2em}
+
+% Cabeçalho e Rodapé
+\pagestyle{fancy} 
+\fancyhf{}
+\fancyhead[LE,RO]{\small\color{primary}\textbf{\thepage}}
+\fancyhead[RE]{\small\color{secondary}\textit{C. V. F. Silva}}
+\fancyhead[LO]{\small\color{secondary}\textit{Generalização em Redes Neurais}}
+\fancyfoot[C]{\small\color{darkgray}Engenharia Elétrica – UFRN | 2025}
+\renewcommand{\headrulewidth}{0.5pt} 
+\renewcommand{\footrulewidth}{0.3pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{primary}\leaders\hrule height \headrulewidth\hfill}}
+\renewcommand{\footrule}{\hbox to\headwidth{\color{primary}\leaders\hrule height \footrulewidth\hfill}}
+
+%========================================================================================
 % DOCUMENTO
-% ============================================================================
+%========================================================================================
 \begin{document}
 
-\maketitle
+%----------------------------------------------------------------------------------------
+% CAPA
+%----------------------------------------------------------------------------------------
+\NoPageBorder
+\begin{titlepage}
 \thispagestyle{empty}
 
-\newpage
+% Gráficos de Fundo
+\begin{tikzpicture}[remember picture, overlay]
+    \fill[secondary] (current page.north west) rectangle (current page.south east);
+    \begin{scope}[opacity=0.1]
+        \foreach \i in {1,...,20} {
+            \pgfmathsetmacro{\x}{rand*10 + 10}
+            \pgfmathsetmacro{\y}{rand*15}
+            \fill[primary] (\x,\y) circle (0.15);
+            \foreach \j in {1,...,3} {
+                 \pgfmathsetmacro{\dx}{rand*3}
+                 \pgfmathsetmacro{\dy}{rand*3}
+                 \draw[lightblue, thin] (\x,\y) -- (\x+\dx, \y+\dy);
+            }
+        }
+    \end{scope}
+    \fill[primary] (current page.north west) -- ($(current page.north west) + (0,-1cm)$) -- ($(current page.north east) + (-10cm,-2.5cm)$) -- (current page.north east) -- cycle;
+    \fill[accent] (current page.south west) -- ($(current page.south west) + (12cm, 2cm)$) -- ($(current page.south east) + (0, 1cm)$) -- (current page.south east) -- cycle;
+\end{tikzpicture}
+
+\begin{center}
+    \vspace*{3cm}
+    
+    % INSTITUIÇÃO
+    {\color{white}\large\bfseries\sffamily\textls[150]{\MakeUppercase{Universidade Federal do Rio Grande do Norte}}}\\[0.2cm]
+    {\color{lightblue}\bfseries\sffamily\textls[100]{CENTRO DE TECNOLOGIA \splitdot DEPARTAMENTO DE ENGENHARIA ELÉTRICA}}\\[1.5cm]
+
+    % TÍTULO
+    \renewcommand{\LettrineFontHook}{\color{accent}\bfseries}
+    {\color{white}\fontsize{28}{32}\selectfont\bfseries\sffamily
+    Análise de Generalização em\\ Redes Neurais
+    }
+    
+    \vspace{0.5cm}
+    
+    % SUBTÍTULO
+    \begin{futuristicbox}
+    \sffamily\textls[100]{REGRESSÃO DE PREÇOS IMOBILIÁRIOS COM VALIDAÇÃO CRUZADA {\color{accent}\textbf{K-FOLD}}}
+    \end{futuristicbox}
+
+    \vfill
+
+    % AUTOR
+    {\color{white}\Large\bfseries\sffamily\textls[100]{\MakeUppercase{Cauã Vitor Figueredo Silva}}}\\[0.3cm]
+    {\color{white}\sffamily Matrícula: \texttt{20220014216} \splitdot \texttt{cauavitor@ufrn.edu.br}}
+
+    \vfill
+
+    % DATA
+    {\color{white}\large\bfseries\sffamily\textls[100]{NATAL - RN} \splitdot \textls[100]{NOVEMBRO DE 2025}}
+    
+    \vspace{2cm}
+\end{center}
+\end{titlepage}
+
+%----------------------------------------------------------------------------------------
+% PRELIMINARY PAGES
+%----------------------------------------------------------------------------------------
+\RestorePageBorder
+\pagestyle{fancy}
+\pagenumbering{roman}
+
 \tableofcontents
 \newpage
+
+%----------------------------------------------------------------------------------------
+% CONTENT START
+%----------------------------------------------------------------------------------------
+\pagenumbering{arabic}
+\setcounter{page}{1}
 
 % ============================================================================
 % 1. INTRODUÇÃO
@@ -102,6 +271,7 @@ Neste projeto, utilizamos o dataset \textit{Boston Housing}, que contém 506 amo
 
 O conceito central deste trabalho é a \textbf{generalização}: a capacidade de um modelo de aprendizado de máquina desempenhar bem em dados \textit{não vistos} durante o treinamento. A generalização está intrinsecamente ligada ao trade-off entre \textbf{viés (bias)} e \textbf{variância (variance)}:
 
+\begin{highlightbox}[title={Conceitos Fundamentais}]
 \begin{itemize}
     \item \textbf{Viés Alto (Underfitting):} Ocorre quando o modelo é excessivamente simples e não consegue capturar os padrões complexos presentes nos dados. Resulta em alto erro tanto no conjunto de treino quanto no de validação.
     
@@ -109,6 +279,7 @@ O conceito central deste trabalho é a \textbf{generalização}: a capacidade de
     
     \item \textbf{Equilíbrio Ótimo:} O modelo ideal minimiza simultaneamente viés e variância, alcançando boa performance em ambos os conjuntos.
 \end{itemize}
+\end{highlightbox}
 
 Matematicamente, o erro esperado de um modelo pode ser decomposto como:
 
@@ -143,6 +314,8 @@ Neste projeto, utilizamos $K=5$, um valor padrão que balanceia viés e variânc
     \item Utilizar Otimização Bayesiana (Optuna) para encontrar hiperparâmetros ótimos.
     \item Analisar quantitativamente e qualitativamente a generalização do modelo.
 \end{enumerate}
+
+\sectiondivider
 
 % ============================================================================
 % 2. METODOLOGIA
@@ -209,7 +382,9 @@ A padronização $z$-score é definida como:
 
 onde $\mu$ é a média e $\sigma$ é o desvio padrão da feature.
 
-\textbf{Prevenção de Data Leakage:} O StandardScaler é ajustado (\texttt{fit}) \textit{exclusivamente} nos dados de treino de cada fold. Os dados de validação são apenas transformados (\texttt{transform}) usando as estatísticas do treino. Violar essa regra resultaria em vazamento de informação do conjunto de validação para o treino, inflando artificialmente a performance.
+\begin{highlightbox}[title={Prevenção de Data Leakage}]
+O StandardScaler é ajustado (\texttt{fit}) \textit{exclusivamente} nos dados de treino de cada fold. Os dados de validação são apenas transformados (\texttt{transform}) usando as estatísticas do treino. Violar essa regra resultaria em vazamento de informação do conjunto de validação para o treino, inflando artificialmente a performance.
+\end{highlightbox}
 
 \subsection{Arquitetura do Modelo}
 
@@ -394,6 +569,8 @@ O \textbf{HyperbandPruner} interrompe trials não-promissores precocemente, econ
 
 Executamos \textbf{20 trials} com K-Fold (K=3) acelerado para eficiência. O melhor conjunto de hiperparâmetros é então retreinado com K=5 para avaliação final robusta.
 
+\sectiondivider
+
 % ============================================================================
 % 3. RESULTADOS
 % ============================================================================
@@ -480,6 +657,7 @@ As Figuras \ref{fig:learning_curves_base} e \ref{fig:learning_curves_opt} exibem
 
 \begin{figure}[H]
     \centering
+    \begin{subcaptiongroup}
     \begin{subfigure}{0.48\textwidth}
         \includegraphics[width=\textwidth]{figures/learning_curves.png}
         \caption{Modelo Base}
@@ -491,6 +669,7 @@ As Figuras \ref{fig:learning_curves_base} e \ref{fig:learning_curves_opt} exibem
         \caption{Modelo Otimizado}
         \label{fig:learning_curves_opt}
     \end{subfigure}
+    \end{subcaptiongroup}
     \caption{Curvas de Aprendizado - Train vs Validation Loss}
     \label{fig:learning_curves}
 \end{figure}
@@ -509,6 +688,7 @@ A Figura \ref{fig:predictions} mostra os gráficos de dispersão entre valores r
 
 \begin{figure}[H]
     \centering
+    \begin{subcaptiongroup}
     \begin{subfigure}{0.48\textwidth}
         \includegraphics[width=\textwidth]{figures/predictions_scatter.png}
         \caption{Modelo Base (R² = 0.925)}
@@ -520,6 +700,7 @@ A Figura \ref{fig:predictions} mostra os gráficos de dispersão entre valores r
         \caption{Modelo Otimizado (R² = 0.916)}
         \label{fig:predictions_opt}
     \end{subfigure}
+    \end{subcaptiongroup}
     \caption{Scatter Plots - Real vs Predito}
     \label{fig:predictions}
 \end{figure}
@@ -629,7 +810,7 @@ A construção de modelos de Machine Learning vai além da escolha de arquitetur
 Este projeto serve como template para futuros trabalhos em Engenharia Elétrica e áreas correlatas, demonstrando que a interseção entre teoria matemática (bias-variance tradeoff), implementação prática (PyTorch), e boas práticas de engenharia (MLOps) resulta em soluções robustas e de alta qualidade.
 
 % ============================================================================
-% REFERÊNCIAS (PLACEHOLDER)
+% REFERÊNCIAS
 % ============================================================================
 \begin{thebibliography}{9}
 
@@ -671,12 +852,13 @@ Dropout: A Simple Way to Prevent Neural Networks from Overfitting.
 \end{thebibliography}
 
 % ============================================================================
-% APÊNDICES (OPCIONAL)
+% APÊNDICES
 % ============================================================================
 \newpage
 \appendix
 \section{Código PyTorch - Arquitetura MLP}
 
+\begin{highlightbox}[title={Implementação da Classe MLP}]
 \begin{lstlisting}[language=Python]
 import torch
 import torch.nn as nn
@@ -722,6 +904,7 @@ class MLP(nn.Module):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         return self.network(x)
 \end{lstlisting}
+\end{highlightbox}
 
 \section{Fluxograma do Pipeline K-Fold}
 
@@ -783,4 +966,3 @@ class MLP(nn.Module):
 \end{figure}
 
 \end{document}
-
