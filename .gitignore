@@ -62,7 +62,6 @@ logs/
 *.cache
 
 # Reports (manter apenas LaTeX, não PDFs)
-reports/*.pdf
 reports/*.aux
 reports/*.out
 reports/*.log
