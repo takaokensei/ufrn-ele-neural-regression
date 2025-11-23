@@ -8,7 +8,7 @@
   <samp>UFRN · Electrical Engineering · Neural Networks Laboratory</samp>
   <br/><br/>
   
-  <img src="https://img.shields.io/badge/Python-3.8+-4A90E2?style=for-the-badge&logo=python&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Python-3.12-4A90E2?style=for-the-badge&logo=python&logoColor=white"/>
   <img src="https://img.shields.io/badge/PyTorch-2.0.1-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white"/>
   <img src="https://img.shields.io/badge/Status-Complete-00C853?style=for-the-badge"/>
   <img src="https://img.shields.io/badge/License-Academic-1a1a2e?style=for-the-badge"/>
@@ -28,6 +28,7 @@ class NeuralRegressionProject:
         self.author = "Cauã Vitor Figueredo Silva"
         self.student_id = "20220014216"
         self.date = "November 2025"
+        self.python_version = "3.12"
     
     def architecture(self):
         return {
