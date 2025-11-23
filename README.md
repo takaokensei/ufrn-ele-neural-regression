@@ -1,257 +1,274 @@
-# 🧠 UFRN - Neural Regression Project
+# Neural Regression with K-Fold Cross-Validation
 
-**Análise de Generalização em Redes Neurais para Regressão de Preços Imobiliários com Validação Cruzada K-Fold**
+> Rigorous generalization analysis in neural networks for real estate price prediction using Boston Housing dataset.
 
----
-
-## 📋 Informações do Projeto
-
-- **Instituição:** Universidade Federal do Rio Grande do Norte (UFRN)
-- **Departamento:** Engenharia Elétrica - Centro de Tecnologia
-- **Autor:** Cauã Vitor Figueredo Silva
-- **Matrícula:** 20220014216
-- **Data:** Novembro de 2025
+[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![PyTorch](https://img.shields.io/badge/PyTorch-2.0.1-red.svg)](https://pytorch.org/)
+[![License](https://img.shields.io/badge/License-Academic-green.svg)](LICENSE)
 
 ---
 
-## 🎯 Objetivo
+## Overview
 
-Este projeto implementa uma **Rede Neural Artificial (MLP)** para regressão de preços imobiliários utilizando o dataset Boston Housing. O foco principal é a análise rigorosa de **generalização**, aplicando técnicas de MLOps como:
+This project implements a Multi-Layer Perceptron (MLP) for real estate price regression with emphasis on robust generalization evaluation. The implementation follows MLOps best practices, including reproducible experimentation, data leakage prevention, and systematic model validation.
 
-- ✅ **K-Fold Cross-Validation (K=5)**
-- ✅ **Early Stopping**
-- ✅ **Model Checkpointing**
-- ✅ **Data Leakage Prevention**
-- ✅ **Reprodutibilidade (Seed Fixing)**
+**Institution:** Federal University of Rio Grande do Norte (UFRN)  
+**Department:** Electrical Engineering  
+**Author:** Cauã Vitor Figueredo Silva  
+**Student ID:** 20220014216  
+**Date:** November 2025
 
 ---
 
-## 📂 Estrutura do Projeto
+## Key Features
+
+- **K-Fold Cross-Validation** (K=5) for robust performance estimation
+- **Early Stopping** with configurable patience to prevent overfitting
+- **Model Checkpointing** to preserve best-performing weights
+- **Data Leakage Prevention** through proper preprocessing pipeline
+- **Reproducibility** via fixed random seeds across libraries
+- **Modular Architecture** following software engineering principles
+
+---
+
+## Project Structure
 
 ```
 ufrn-ele-neural-regression/
 │
-├── README.md              # Documentação e Histórico de Versões
-├── requirements.txt       # Dependências exatas (torch, pandas, numpy, etc.)
-├── .gitignore             # Arquivos a ignorar (dados, modelos, cache)
-│
 ├── data/
-│   ├── raw/               # Dados brutos (boston.csv via URL)
-│   └── processed/         # Dados normalizados (opcional)
+│   ├── raw/                    # Original datasets
+│   └── processed/              # Normalized/transformed data
 │
-├── notebooks/             # Ambiente de Experimentação
-│   └── project_main.ipynb # Notebook principal com código completo
+├── src/
+│   ├── dataset.py              # Data loading and PyTorch Dataset
+│   ├── model.py                # MLP architecture definition
+│   ├── train.py                # Training and validation loops
+│   └── visualization.py        # Loss curves and scatter plots
 │
-├── src/                   # Código Modular (Simulado dentro do Notebook)
-│   ├── __init__.py        # Inicializador do pacote
-│   ├── dataset.py         # Carregamento e Dataset PyTorch
-│   ├── model.py           # Arquitetura MLP
-│   ├── train.py           # Loops de treino e validação
-│   └── visualization.py   # Plots de loss e scatter
+├── notebooks/
+│   └── project_main.ipynb      # Complete experimental workflow
 │
-├── models/                # Checkpoints
-│   └── best_model_fold.pth
+├── models/                     # Model checkpoints
+├── reports/                    # LaTeX documentation
 │
-└── reports/               # Relatório LaTeX
-    ├── figures/           # Imagens geradas
-    └── relatorio_final.tex
+├── requirements.txt            # Python dependencies
+├── .gitignore
+└── README.md
 ```
-
-### 📁 Descrição das Pastas
-
-| Pasta | Função |
-|-------|--------|
-| `data/raw/` | Dados originais sem processamento |
-| `data/processed/` | Dados após normalização/transformação |
-| `notebooks/` | Experimentação e prototyping |
-| `src/` | Código modular e reutilizável |
-| `models/` | Checkpoints dos melhores modelos |
-| `reports/` | Documentação técnica (LaTeX) |
 
 ---
 
-## 🚀 Como Executar
+## Dataset
 
-### 1. Instalar Dependências
+**Boston Housing Dataset**
+- **Source:** Carnegie Mellon University Statistical Library
+- **Instances:** 506
+- **Features:** 13 (socioeconomic and environmental indicators)
+- **Target:** Median home value (MEDV) in $1000s
+
+### Feature Description
+
+| Feature | Description |
+|---------|-------------|
+| CRIM | Per capita crime rate |
+| ZN | Proportion of residential land zoned for large lots |
+| INDUS | Proportion of non-retail business acres |
+| CHAS | Charles River proximity (binary) |
+| NOX | Nitric oxides concentration |
+| RM | Average number of rooms per dwelling |
+| AGE | Proportion of owner-occupied units built prior to 1940 |
+| DIS | Weighted distances to employment centers |
+| RAD | Accessibility to radial highways |
+| TAX | Property tax rate |
+| PTRATIO | Pupil-teacher ratio |
+| B | Proportion of Black residents |
+| LSTAT | Percentage of lower status population |
+
+---
+
+## Model Architecture
+
+```
+MLP Sequential Architecture
+├── Input Layer: 13 features
+├── Hidden Layer 1: 64 neurons + ReLU
+├── Hidden Layer 2: 32 neurons + ReLU
+└── Output Layer: 1 neuron (linear)
+```
+
+### Hyperparameters
+
+| Parameter | Value |
+|-----------|-------|
+| Optimizer | Adam |
+| Learning Rate | 0.001 |
+| Loss Function | Mean Squared Error (MSE) |
+| Batch Size | 16 |
+| Max Epochs | 500 |
+| Early Stopping Patience | 20 |
+| K-Fold Splits | 5 |
+
+---
+
+## Installation
+
+### Prerequisites
+
+- Python 3.8 or higher
+- pip package manager
+
+### Setup
 
 ```bash
+# Clone the repository
+git clone https://github.com/yourusername/ufrn-ele-neural-regression.git
+cd ufrn-ele-neural-regression
+
+# Install dependencies
 pip install -r requirements.txt
 ```
 
-### 2. Executar o Notebook Principal
+### Dependencies
+
+```
+torch==2.0.1
+scikit-learn==1.3.0
+pandas==2.0.2
+matplotlib==3.7.1
+numpy==1.24.3
+jupyter==1.0.0
+```
+
+---
+
+## Usage
+
+### Running the Main Notebook
 
 ```bash
 jupyter notebook notebooks/project_main.ipynb
 ```
 
-### 3. Compilar o Relatório LaTeX
+### Training Pipeline
+
+The training pipeline automatically:
+1. Downloads and loads the Boston Housing dataset
+2. Applies StandardScaler normalization (fitted on training data only)
+3. Performs 5-fold cross-validation
+4. Trains MLP with early stopping
+5. Saves best model checkpoint per fold
+6. Generates learning curves and prediction scatter plots
+7. Computes aggregate performance metrics
+
+### Generating Report
 
 ```bash
 cd reports
+pdflatex relatorio_final.tex
+bibtex relatorio_final
+pdflatex relatorio_final.tex
 pdflatex relatorio_final.tex
 ```
 
 ---
 
-## 📊 Dataset
+## Methodology
 
-**Boston Housing Dataset**
-- **Fonte:** http://lib.stat.cmu.edu/datasets/boston
-- **Instâncias:** 506
-- **Features:** 13 (CRIM, ZN, INDUS, CHAS, NOX, RM, AGE, DIS, RAD, TAX, PTRATIO, B, LSTAT)
-- **Target:** MEDV (Preço mediano das casas em $1000)
+### Cross-Validation Strategy
+
+The implementation uses stratified K-Fold cross-validation to ensure:
+- Each fold serves as validation set exactly once
+- Training data remains independent from validation data
+- Performance metrics reflect true generalization capability
+
+### Data Leakage Prevention
+
+Normalization is performed within each fold:
+```python
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_val_scaled = scaler.transform(X_val)  # No fit on validation
+```
+
+### Reproducibility
+
+Random seeds are fixed for:
+- PyTorch operations (`torch.manual_seed`)
+- NumPy operations (`np.random.seed`)
+- Python random module (`random.seed`)
 
 ---
 
-## 🏗️ Arquitetura da Rede Neural
+## Expected Results
 
-```
-Input Layer (13 features)
-    ↓
-Hidden Layer 1 (64 neurônios, ReLU)
-    ↓
-Hidden Layer 2 (32 neurônios, ReLU)
-    ↓
-Output Layer (1 neurônio, Linear)
-```
+### Performance Metrics
+- **Target MSE:** < 20.0 (across all folds)
+- **Standard Deviation:** Low variance between folds indicates stable generalization
 
-**Hiperparâmetros:**
-- Otimizador: Adam (lr=0.001)
-- Loss Function: MSELoss
-- Batch Size: 16
-- Epochs: 500 (com Early Stopping)
-- K-Fold: 5 splits
+### Visualizations
+- **Learning Curves:** Training and validation loss converging without significant gap
+- **Scatter Plot:** Predictions closely aligned with identity line (y=x)
 
 ---
 
-## 📈 Resultados Esperados
+## Development Timeline
 
-- **Curvas de Aprendizado:** Convergência suave entre treino e validação
-- **Scatter Plot:** Predições próximas à linha identidade (y=x)
-- **Métrica:** MSE médio < 20.0 (após K-Fold)
+The project followed an incremental development approach:
+
+1. **Infrastructure** (Commits #01-#02): Project structure and data loading
+2. **Model Implementation** (Commits #03-#04): MLP architecture and preprocessing
+3. **Training Pipeline** (Commits #05-#08): K-Fold, training loop, early stopping, checkpointing
+4. **Optimization** (Commits #09-#11): Hyperparameter tuning, visualization, reproducibility
+5. **Refinement** (Commits #12-#16): Code modularization, documentation, validation
+6. **Finalization** (Commits #17-#20): Report completion, analysis, cleanup
 
 ---
 
-## 🔄 Histórico de Commits Simulado
+## Future Enhancements
 
-Este projeto foi desenvolvido seguindo um fluxo de trabalho incremental. Abaixo está o histórico de commits que representa a evolução do código:
+- [ ] Experiment with deeper architectures (3+ hidden layers)
+- [ ] Implement regularization techniques (Dropout, L2)
+- [ ] Conduct hyperparameter grid search
+- [ ] Add SHAP values for feature importance analysis
+- [ ] Deploy model via REST API (FastAPI)
+- [ ] Integrate MLflow for experiment tracking
 
-```
-commit #01 - feat: initialize project structure
-  └─ Criação da estrutura de diretórios (data, src, models, reports)
-  └─ Adição de requirements.txt e .gitignore
+---
 
-commit #02 - feat: add data loading module
-  └─ Implementação de src/dataset.py
-  └─ Função robusta para download do Boston Housing Dataset
-  └─ Tratamento de cabeçalho complexo da URL original
+## Contributing
 
-commit #03 - feat: implement MLP architecture
-  └─ Criação de src/model.py
-  └─ Classe MLP com 2 camadas ocultas
-  └─ Utilização de torch.nn.Module
+This is an academic project. For suggestions or improvements, please contact the author.
 
-commit #04 - feat: add preprocessing with StandardScaler
-  └─ Integração do StandardScaler no pipeline
-  └─ Prevenção de Data Leakage (fit apenas no treino)
+---
 
-commit #05 - feat: implement K-Fold Cross-Validation
-  └─ Loop manual de K-Fold (K=5)
-  └─ Separação correta de treino/validação
+## Citation
 
-commit #06 - feat: add training loop with validation
-  └─ Implementação de src/train.py
-  └─ Loop de treino com cálculo de loss
+If you use this code for academic purposes, please cite:
 
-commit #07 - feat: implement Early Stopping mechanism
-  └─ Lógica de parada antecipada (patience=20)
-  └─ Monitoramento de val_loss para evitar overfitting
-
-commit #08 - feat: add Model Checkpointing
-  └─ Salvamento automático do melhor modelo
-  └─ torch.save() e torch.load() integrados
-
-commit #09 - fix: adjust learning rate for better convergence
-  └─ Mudança de lr=0.01 para lr=0.001
-  └─ Melhoria na estabilidade do treino
-
-commit #10 - feat: add visualization module
-  └─ Criação de src/visualization.py
-  └─ Gráfico de Learning Curves (train vs validation)
-  └─ Scatter Plot (Real vs Predito)
-
-commit #11 - feat: implement seed fixing for reproducibility
-  └─ Fixação de seeds (torch, numpy, random)
-  └─ Garantia de resultados determinísticos
-
-commit #12 - refactor: modularize code structure
-  └─ Separação de responsabilidades entre módulos
-  └─ Type hints adicionados para melhor legibilidade
-
-commit #13 - docs: add LaTeX report template
-  └─ Criação de reports/relatorio_final.tex
-  └─ Estrutura ABNT com Introduction, Methodology, Results
-
-commit #14 - feat: integrate metrics aggregation
-  └─ Cálculo de média e desvio padrão do MSE
-  └─ Tabela final com resultados do K-Fold
-
-commit #15 - style: improve plot aesthetics
-  └─ Ajuste de fontes, cores e legendas
-  └─ Gráficos profissionais para publicação
-
-commit #16 - test: validate data leakage prevention
-  └─ Verificação manual do fluxo de normalização
-  └─ Confirmação de que scaler não vê dados de validação
-
-commit #17 - docs: complete LaTeX report content
-  └─ Preenchimento de Introduction e Methodology
-  └─ Adição de placeholders para tabelas de resultados
-
-commit #18 - feat: add analysis of generalization
-  └─ Célula Markdown com análise final
-  └─ Classificação: Overfitting/Underfitting/Generalização
-
-commit #19 - docs: update README with usage instructions
-  └─ Adição de seção "Como Executar"
-  └─ Documentação completa da estrutura do projeto
-
-commit #20 - chore: final cleanup and organization
-  └─ Remoção de arquivos temporários
-  └─ Validação final de todos os módulos
+```bibtex
+@misc{silva2025neural,
+  author = {Silva, Cauã Vitor Figueredo},
+  title = {Neural Regression with K-Fold Cross-Validation},
+  year = {2025},
+  institution = {Federal University of Rio Grande do Norte},
+  department = {Electrical Engineering}
+}
 ```
 
 ---
 
-## 🛠️ Tecnologias Utilizadas
+## License
 
-- **PyTorch 2.0.1** - Framework de Deep Learning
-- **scikit-learn 1.3.0** - Pré-processamento e K-Fold
-- **Pandas 2.0.2** - Manipulação de dados
-- **Matplotlib 3.7.1** - Visualização
-- **NumPy 1.24.3** - Operações numéricas
+This project is developed for academic purposes at the Federal University of Rio Grande do Norte (UFRN). All rights reserved for educational use.
 
 ---
 
-## 📝 Próximos Passos
-
-- [ ] Experimentar arquiteturas mais profundas
-- [ ] Testar regularização (Dropout, L2)
-- [ ] Implementar Grid Search para hiperparâmetros
-- [ ] Adicionar análise de SHAP Values
-- [ ] Deployar modelo via FastAPI
-
----
-
-## 📄 Licença
-
-Este projeto é de uso acadêmico para a disciplina de Engenharia Elétrica da UFRN.
-
----
-
-## 👤 Contato
+## Contact
 
 **Cauã Vitor Figueredo Silva**  
-Matrícula: 20220014216  
-UFRN - Departamento de Engenharia Elétrica
+Student ID: 20220014216  
+Department of Electrical Engineering  
+Federal University of Rio Grande do Norte (UFRN)
 
+For inquiries, please use the institutional communication channels.
