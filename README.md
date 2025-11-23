@@ -1,274 +1,401 @@
-# Neural Regression with K-Fold Cross-Validation
+<div align="center">
+  <img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=1a1a2e&height=120&section=header"/>
+  
+  <h1>
+    <img src="https://readme-typing-svg.herokuapp.com/?lines=Neural+Regression+Analysis;K-Fold+Cross-Validation;Boston+Housing+Dataset;MLOps+Best+Practices&font=Fira+Code&center=true&width=600&height=50&color=4A90E2&vCenter=true&pause=1000&size=24" />
+  </h1>
+  
+  <samp>UFRN · Electrical Engineering · Neural Networks Laboratory</samp>
+  <br/><br/>
+  
+  <img src="https://img.shields.io/badge/Python-3.8+-4A90E2?style=for-the-badge&logo=python&logoColor=white"/>
+  <img src="https://img.shields.io/badge/PyTorch-2.0.1-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Status-Complete-00C853?style=for-the-badge"/>
+  <img src="https://img.shields.io/badge/License-Academic-1a1a2e?style=for-the-badge"/>
+</div>
 
-> Rigorous generalization analysis in neural networks for real estate price prediction using Boston Housing dataset.
+<br/>
 
-[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![PyTorch](https://img.shields.io/badge/PyTorch-2.0.1-red.svg)](https://pytorch.org/)
-[![License](https://img.shields.io/badge/License-Academic-green.svg)](LICENSE)
+## `> project.overview()`
 
----
+```python
+class NeuralRegressionProject:
+    def __init__(self):
+        self.title = "Generalization Analysis in Neural Networks"
+        self.task = "Real Estate Price Regression"
+        self.dataset = "Boston Housing (506 instances, 13 features)"
+        self.institution = "UFRN - Federal University of Rio Grande do Norte"
+        self.author = "Cauã Vitor Figueredo Silva"
+        self.student_id = "20220014216"
+        self.date = "November 2025"
+    
+    def architecture(self):
+        return {
+            "type": "Multi-Layer Perceptron (MLP)",
+            "layers": [13, 64, 32, 1],
+            "activation": "ReLU",
+            "optimizer": "Adam (lr=0.001)",
+            "loss": "Mean Squared Error"
+        }
+    
+    def mlops_practices(self):
+        return [
+            "K-Fold Cross-Validation (K=5)",
+            "Early Stopping (patience=20)",
+            "Model Checkpointing",
+            "Data Leakage Prevention",
+            "Reproducibility (Fixed Seeds)",
+            "Modular Code Architecture"
+        ]
+```
 
-## Overview
+<br/>
 
-This project implements a Multi-Layer Perceptron (MLP) for real estate price regression with emphasis on robust generalization evaluation. The implementation follows MLOps best practices, including reproducible experimentation, data leakage prevention, and systematic model validation.
+## `> tech_stack`
 
-**Institution:** Federal University of Rio Grande do Norte (UFRN)  
-**Department:** Electrical Engineering  
-**Author:** Cauã Vitor Figueredo Silva  
-**Student ID:** 20220014216  
-**Date:** November 2025
+<div align="center">
+  <img src="https://skillicons.dev/icons?i=python,pytorch,sklearn,git,latex,github&theme=dark&perline=6" />
+</div>
 
----
+<table align="center">
+<tr>
+<td align="center" width="33%">
+<strong>🧠 Deep Learning</strong><br/><br/>
+<img src="https://img.shields.io/badge/PyTorch-EE4C2C?style=flat-square&logo=pytorch&logoColor=white"/>
+<img src="https://img.shields.io/badge/NumPy-013243?style=flat-square&logo=numpy&logoColor=white"/>
+<img src="https://img.shields.io/badge/Pandas-150458?style=flat-square&logo=pandas&logoColor=white"/>
+</td>
+<td align="center" width="33%">
+<strong>📊 ML Pipeline</strong><br/><br/>
+<img src="https://img.shields.io/badge/scikit--learn-F7931E?style=flat-square&logo=scikitlearn&logoColor=white"/>
+<img src="https://img.shields.io/badge/Matplotlib-11557c?style=flat-square"/>
+<img src="https://img.shields.io/badge/Jupyter-F37626?style=flat-square&logo=jupyter&logoColor=white"/>
+</td>
+<td align="center" width="33%">
+<strong>🔧 Documentation</strong><br/><br/>
+<img src="https://img.shields.io/badge/LaTeX-008080?style=flat-square&logo=latex&logoColor=white"/>
+<img src="https://img.shields.io/badge/Git-F05032?style=flat-square&logo=git&logoColor=white"/>
+<img src="https://img.shields.io/badge/Markdown-000000?style=flat-square&logo=markdown&logoColor=white"/>
+</td>
+</tr>
+</table>
 
-## Key Features
+<br/>
 
-- **K-Fold Cross-Validation** (K=5) for robust performance estimation
-- **Early Stopping** with configurable patience to prevent overfitting
-- **Model Checkpointing** to preserve best-performing weights
-- **Data Leakage Prevention** through proper preprocessing pipeline
-- **Reproducibility** via fixed random seeds across libraries
-- **Modular Architecture** following software engineering principles
-
----
-
-## Project Structure
+## `> project_structure`
 
 ```
 ufrn-ele-neural-regression/
 │
-├── data/
-│   ├── raw/                    # Original datasets
-│   └── processed/              # Normalized/transformed data
+├── 📊 data/
+│   ├── raw/                    # Boston Housing CSV
+│   └── processed/              # Normalized datasets
 │
-├── src/
-│   ├── dataset.py              # Data loading and PyTorch Dataset
-│   ├── model.py                # MLP architecture definition
-│   ├── train.py                # Training and validation loops
-│   └── visualization.py        # Loss curves and scatter plots
+├── 🧠 src/
+│   ├── dataset.py              # Data loading & PyTorch Dataset
+│   ├── model.py                # MLP architecture
+│   ├── train.py                # Training loops & validation
+│   └── visualization.py        # Loss curves & scatter plots
 │
-├── notebooks/
+├── 📓 notebooks/
 │   └── project_main.ipynb      # Complete experimental workflow
 │
-├── models/                     # Model checkpoints
-├── reports/                    # LaTeX documentation
+├── 💾 models/                  # Best model checkpoints (per fold)
+├── 📄 reports/                 # LaTeX documentation & figures
 │
-├── requirements.txt            # Python dependencies
+├── requirements.txt
 ├── .gitignore
 └── README.md
 ```
 
----
+<br/>
 
-## Dataset
+## `> methodology`
 
-**Boston Housing Dataset**
-- **Source:** Carnegie Mellon University Statistical Library
-- **Instances:** 506
-- **Features:** 13 (socioeconomic and environmental indicators)
-- **Target:** Median home value (MEDV) in $1000s
+<table align="center">
+<tr>
+<td width="50%">
+<h3 align="center">📐 Cross-Validation Strategy</h3>
+<p align="center">
+<img src="https://img.shields.io/badge/K--Fold-5_Splits-4A90E2?style=for-the-badge"/>
+</p>
+<p><samp><strong>Stratified K-Fold</strong> ensures each fold serves as validation set exactly once, preventing data leakage and providing robust performance estimates.</samp></p>
 
-### Feature Description
+```python
+from sklearn.model_selection import KFold
 
-| Feature | Description |
-|---------|-------------|
-| CRIM | Per capita crime rate |
-| ZN | Proportion of residential land zoned for large lots |
-| INDUS | Proportion of non-retail business acres |
-| CHAS | Charles River proximity (binary) |
-| NOX | Nitric oxides concentration |
-| RM | Average number of rooms per dwelling |
-| AGE | Proportion of owner-occupied units built prior to 1940 |
-| DIS | Weighted distances to employment centers |
-| RAD | Accessibility to radial highways |
-| TAX | Property tax rate |
-| PTRATIO | Pupil-teacher ratio |
-| B | Proportion of Black residents |
-| LSTAT | Percentage of lower status population |
-
----
-
-## Model Architecture
-
+kf = KFold(n_splits=5, shuffle=True, 
+           random_state=42)
+for fold, (train_idx, val_idx) in 
+    enumerate(kf.split(X)):
+    # Train & validate
 ```
-MLP Sequential Architecture
-├── Input Layer: 13 features
-├── Hidden Layer 1: 64 neurons + ReLU
-├── Hidden Layer 2: 32 neurons + ReLU
-└── Output Layer: 1 neuron (linear)
+</td>
+<td width="50%">
+<h3 align="center">🛡️ Data Leakage Prevention</h3>
+<p align="center">
+<img src="https://img.shields.io/badge/StandardScaler-Isolated-00C853?style=for-the-badge"/>
+</p>
+<p><samp><strong>Normalization within folds</strong> ensures validation data never influences training statistics, maintaining true generalization measurement.</samp></p>
+
+```python
+scaler = StandardScaler()
+# Fit ONLY on training data
+X_train = scaler.fit_transform(X_train)
+# Transform validation (no fit)
+X_val = scaler.transform(X_val)
+```
+</td>
+</tr>
+</table>
+
+<br/>
+
+## `> model_architecture`
+
+<div align="center">
+
+```mermaid
+graph TD
+    A[Input Layer<br/>13 Features] --> B[Hidden Layer 1<br/>64 Neurons + ReLU]
+    B --> C[Hidden Layer 2<br/>32 Neurons + ReLU]
+    C --> D[Output Layer<br/>1 Neuron Linear]
+    
+    style A fill:#4A90E2,stroke:#1a1a2e,stroke-width:2px,color:#fff
+    style B fill:#00C853,stroke:#1a1a2e,stroke-width:2px,color:#fff
+    style C fill:#00C853,stroke:#1a1a2e,stroke-width:2px,color:#fff
+    style D fill:#EE4C2C,stroke:#1a1a2e,stroke-width:2px,color:#fff
 ```
 
-### Hyperparameters
+</div>
 
-| Parameter | Value |
-|-----------|-------|
-| Optimizer | Adam |
-| Learning Rate | 0.001 |
-| Loss Function | Mean Squared Error (MSE) |
-| Batch Size | 16 |
-| Max Epochs | 500 |
-| Early Stopping Patience | 20 |
-| K-Fold Splits | 5 |
+<table align="center">
+<tr>
+<td align="center"><strong>Parameter</strong></td>
+<td align="center"><strong>Value</strong></td>
+<td align="center"><strong>Justification</strong></td>
+</tr>
+<tr>
+<td align="center">Optimizer</td>
+<td align="center"><code>Adam</code></td>
+<td align="center">Adaptive learning rate</td>
+</tr>
+<tr>
+<td align="center">Learning Rate</td>
+<td align="center"><code>0.001</code></td>
+<td align="center">Stable convergence</td>
+</tr>
+<tr>
+<td align="center">Loss Function</td>
+<td align="center"><code>MSE</code></td>
+<td align="center">Regression task</td>
+</tr>
+<tr>
+<td align="center">Batch Size</td>
+<td align="center"><code>16</code></td>
+<td align="center">Small dataset efficiency</td>
+</tr>
+<tr>
+<td align="center">Early Stopping</td>
+<td align="center"><code>patience=20</code></td>
+<td align="center">Overfitting prevention</td>
+</tr>
+</table>
 
----
+<br/>
 
-## Installation
-
-### Prerequisites
-
-- Python 3.8 or higher
-- pip package manager
-
-### Setup
+## `> installation`
 
 ```bash
-# Clone the repository
+# Clone repository
 git clone https://github.com/yourusername/ufrn-ele-neural-regression.git
 cd ufrn-ele-neural-regression
 
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+# or
+venv\Scripts\activate  # Windows
+
 # Install dependencies
 pip install -r requirements.txt
-```
 
-### Dependencies
-
-```
-torch==2.0.1
-scikit-learn==1.3.0
-pandas==2.0.2
-matplotlib==3.7.1
-numpy==1.24.3
-jupyter==1.0.0
-```
-
----
-
-## Usage
-
-### Running the Main Notebook
-
-```bash
+# Launch Jupyter
 jupyter notebook notebooks/project_main.ipynb
 ```
 
-### Training Pipeline
+<br/>
 
-The training pipeline automatically:
-1. Downloads and loads the Boston Housing dataset
-2. Applies StandardScaler normalization (fitted on training data only)
-3. Performs 5-fold cross-validation
-4. Trains MLP with early stopping
-5. Saves best model checkpoint per fold
-6. Generates learning curves and prediction scatter plots
-7. Computes aggregate performance metrics
+## `> dataset_analysis`
 
-### Generating Report
+<div align="center">
 
-```bash
-cd reports
-pdflatex relatorio_final.tex
-bibtex relatorio_final
-pdflatex relatorio_final.tex
-pdflatex relatorio_final.tex
+| Feature | Description | Type |
+|---------|-------------|------|
+| `CRIM` | Per capita crime rate | Continuous |
+| `ZN` | Residential land zoned for large lots | Continuous |
+| `INDUS` | Non-retail business acres proportion | Continuous |
+| `CHAS` | Charles River proximity | Binary |
+| `NOX` | Nitric oxides concentration | Continuous |
+| `RM` | Average rooms per dwelling | Continuous |
+| `AGE` | Pre-1940 owner-occupied units | Continuous |
+| `DIS` | Distance to employment centers | Continuous |
+| `RAD` | Highway accessibility index | Discrete |
+| `TAX` | Property tax rate | Continuous |
+| `PTRATIO` | Pupil-teacher ratio | Continuous |
+| `B` | Proportion of Black residents | Continuous |
+| `LSTAT` | Lower status population % | Continuous |
+| **`MEDV`** | **Median home value ($1000s)** | **Target** |
+
+<img src="https://img.shields.io/badge/Instances-506-4A90E2?style=for-the-badge"/>
+<img src="https://img.shields.io/badge/Features-13-00C853?style=for-the-badge"/>
+<img src="https://img.shields.io/badge/Target-Continuous-EE4C2C?style=for-the-badge"/>
+
+</div>
+
+<br/>
+
+## `> expected_results`
+
+<table align="center">
+<tr>
+<td width="50%" align="center">
+<h3>📈 Learning Curves</h3>
+<p><samp>Training and validation loss converging smoothly without significant gap, indicating proper generalization.</samp></p>
+<br/>
+<img src="https://img.shields.io/badge/Target-Convergence-4A90E2?style=flat-square"/>
+<img src="https://img.shields.io/badge/No-Overfitting-00C853?style=flat-square"/>
+</td>
+<td width="50%" align="center">
+<h3>🎯 Prediction Accuracy</h3>
+<p><samp>Scatter plot showing predictions closely aligned with identity line (y=x), demonstrating model reliability.</samp></p>
+<br/>
+<img src="https://img.shields.io/badge/MSE-<_20.0-4A90E2?style=flat-square"/>
+<img src="https://img.shields.io/badge/R²-High-00C853?style=flat-square"/>
+</td>
+</tr>
+</table>
+
+<br/>
+
+## `> development_timeline`
+
+<div align="center">
+
+```mermaid
+gantt
+    title Project Development Phases
+    dateFormat  YYYY-MM-DD
+    section Infrastructure
+    Project Setup           :done, 2025-11-01, 2d
+    Data Loading Module     :done, 2025-11-03, 2d
+    section Model
+    MLP Architecture        :done, 2025-11-05, 2d
+    Preprocessing Pipeline  :done, 2025-11-07, 2d
+    section Training
+    K-Fold Implementation   :done, 2025-11-09, 3d
+    Early Stopping          :done, 2025-11-12, 2d
+    Model Checkpointing     :done, 2025-11-14, 1d
+    section Optimization
+    Hyperparameter Tuning   :done, 2025-11-15, 2d
+    Visualization Module    :done, 2025-11-17, 2d
+    section Documentation
+    LaTeX Report            :done, 2025-11-19, 3d
+    Final Analysis          :done, 2025-11-22, 2d
 ```
 
----
+</div>
 
-## Methodology
+<br/>
 
-### Cross-Validation Strategy
+## `> future_enhancements`
 
-The implementation uses stratified K-Fold cross-validation to ensure:
-- Each fold serves as validation set exactly once
-- Training data remains independent from validation data
-- Performance metrics reflect true generalization capability
+<table align="center">
+<tr>
+<td align="center" width="25%">
+<strong>🏗️ Architecture</strong><br/><br/>
+<samp>
+• Deeper networks (3+ layers)<br/>
+• Residual connections<br/>
+• Batch normalization
+</samp>
+</td>
+<td align="center" width="25%">
+<strong>🎛️ Regularization</strong><br/><br/>
+<samp>
+• Dropout layers<br/>
+• L2 weight decay<br/>
+• Data augmentation
+</samp>
+</td>
+<td align="center" width="25%">
+<strong>🔍 Analysis</strong><br/><br/>
+<samp>
+• SHAP values<br/>
+• Feature importance<br/>
+• Sensitivity analysis
+</samp>
+</td>
+<td align="center" width="25%">
+<strong>🚀 Deployment</strong><br/><br/>
+<samp>
+• FastAPI REST API<br/>
+• Docker containerization<br/>
+• MLflow tracking
+</samp>
+</td>
+</tr>
+</table>
 
-### Data Leakage Prevention
+<br/>
 
-Normalization is performed within each fold:
-```python
-scaler = StandardScaler()
-X_train_scaled = scaler.fit_transform(X_train)
-X_val_scaled = scaler.transform(X_val)  # No fit on validation
-```
-
-### Reproducibility
-
-Random seeds are fixed for:
-- PyTorch operations (`torch.manual_seed`)
-- NumPy operations (`np.random.seed`)
-- Python random module (`random.seed`)
-
----
-
-## Expected Results
-
-### Performance Metrics
-- **Target MSE:** < 20.0 (across all folds)
-- **Standard Deviation:** Low variance between folds indicates stable generalization
-
-### Visualizations
-- **Learning Curves:** Training and validation loss converging without significant gap
-- **Scatter Plot:** Predictions closely aligned with identity line (y=x)
-
----
-
-## Development Timeline
-
-The project followed an incremental development approach:
-
-1. **Infrastructure** (Commits #01-#02): Project structure and data loading
-2. **Model Implementation** (Commits #03-#04): MLP architecture and preprocessing
-3. **Training Pipeline** (Commits #05-#08): K-Fold, training loop, early stopping, checkpointing
-4. **Optimization** (Commits #09-#11): Hyperparameter tuning, visualization, reproducibility
-5. **Refinement** (Commits #12-#16): Code modularization, documentation, validation
-6. **Finalization** (Commits #17-#20): Report completion, analysis, cleanup
-
----
-
-## Future Enhancements
-
-- [ ] Experiment with deeper architectures (3+ hidden layers)
-- [ ] Implement regularization techniques (Dropout, L2)
-- [ ] Conduct hyperparameter grid search
-- [ ] Add SHAP values for feature importance analysis
-- [ ] Deploy model via REST API (FastAPI)
-- [ ] Integrate MLflow for experiment tracking
-
----
-
-## Contributing
-
-This is an academic project. For suggestions or improvements, please contact the author.
-
----
-
-## Citation
-
-If you use this code for academic purposes, please cite:
+## `> citation`
 
 ```bibtex
-@misc{silva2025neural,
-  author = {Silva, Cauã Vitor Figueredo},
-  title = {Neural Regression with K-Fold Cross-Validation},
-  year = {2025},
-  institution = {Federal University of Rio Grande do Norte},
-  department = {Electrical Engineering}
+@misc{silva2025neuralregression,
+  author       = {Silva, Cauã Vitor Figueredo},
+  title        = {Neural Regression with K-Fold Cross-Validation: 
+                  Generalization Analysis for Real Estate Price Prediction},
+  year         = {2025},
+  institution  = {Federal University of Rio Grande do Norte},
+  department   = {Electrical Engineering},
+  type         = {Academic Project}
 }
 ```
 
----
+<br/>
 
-## License
+## `> contact`
 
-This project is developed for academic purposes at the Federal University of Rio Grande do Norte (UFRN). All rights reserved for educational use.
+<div align="center">
+  
+  <strong>Cauã Vitor Figueredo Silva</strong>
+  <br/>
+  <samp>Student ID: 20220014216</samp>
+  <br/>
+  <samp>Department of Electrical Engineering</samp>
+  <br/>
+  <samp>Federal University of Rio Grande do Norte (UFRN) 🇧🇷</samp>
+  
+  <br/><br/>
+  
+  <a href="mailto:cauavitorfigueredo@gmail.com">
+    <img src="https://img.shields.io/badge/-Email-EA4335?style=for-the-badge&logo=gmail&logoColor=white"/>
+  </a>
+  <a href="https://github.com/takaokensei">
+    <img src="https://img.shields.io/badge/-GitHub-181717?style=for-the-badge&logo=github&logoColor=white"/>
+  </a>
+  <a href="https://www.linkedin.com/in/cauã-vitor-7bb072286/">
+    <img src="https://img.shields.io/badge/-LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white"/>
+  </a>
 
----
+</div>
 
-## Contact
+<br/>
 
-**Cauã Vitor Figueredo Silva**  
-Student ID: 20220014216  
-Department of Electrical Engineering  
-Federal University of Rio Grande do Norte (UFRN)
+<div align="center">
+  <img src="https://img.shields.io/badge/Made_with-PyTorch_❤️-EE4C2C?style=for-the-badge"/>
+  <img src="https://img.shields.io/badge/For-Academic_Research-4A90E2?style=for-the-badge"/>
+</div>
 
-For inquiries, please use the institutional communication channels.
+<img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=1a1a2e&height=100&section=footer"/>
