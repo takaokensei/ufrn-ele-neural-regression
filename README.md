@@ -477,29 +477,84 @@ Excellent alignment with y=x line
 
 <div align="center">
 
-```mermaid
-gantt
-    title Project Development Phases
-    dateFormat  YYYY-MM-DD
-    section Infrastructure
-    Project Setup           :done, 2025-11-01, 2d
-    Data Loading Module     :done, 2025-11-03, 2d
-    section Model
-    MLP Architecture        :done, 2025-11-05, 2d
-    Preprocessing Pipeline  :done, 2025-11-07, 2d
-    section Training
-    K-Fold Implementation   :done, 2025-11-09, 3d
-    Early Stopping          :done, 2025-11-12, 2d
-    Model Checkpointing     :done, 2025-11-14, 1d
-    section Optimization
-    Hyperparameter Tuning   :done, 2025-11-15, 2d
-    Bayesian Optimization   :done, 2025-11-17, 2d
-    section Documentation
-    LaTeX Report (ABNT)     :done, 2025-11-19, 3d
-    Final Analysis          :done, 2025-11-22, 2d
-```
+### ⚡ Rapid Development: Complete Implementation in 1 Day
+
+<img src="https://img.shields.io/badge/Development_Time-20_hours-EE4C2C?style=for-the-badge"/>
+<img src="https://img.shields.io/badge/Total_Commits-24-4A90E2?style=for-the-badge"/>
+<img src="https://img.shields.io/badge/Approach-Agile_Sprint-00C853?style=for-the-badge"/>
 
 </div>
+
+```
+📅 November 2025 - Intensive Development Session
+
+┌─ Hour 00-01: Infrastructure Setup
+│  • Initial commit & project structure
+│  • Dependencies configuration
+│
+├─ Hour 01-03: Core Implementation  
+│  • MLP architecture with PyTorch
+│  • K-Fold cross-validation pipeline
+│  • StandardScaler integration
+│
+├─ Hour 03-05: Regularization Phase
+│  • Dropout (30%) implementation
+│  • L2 Weight Decay integration
+│  • Early Stopping mechanism
+│
+├─ Hour 05-08: Optimization & SOTA
+│  • Bayesian Optimization with Optuna (20 trials)
+│  • Hyperband Pruner for efficiency
+│  • BatchNorm compatibility fixes
+│
+├─ Hour 08-12: Results & Analysis
+│  • Complete notebook execution
+│  • Learning curves generation
+│  • Scatter plots (predictions vs real)
+│  • Optuna visualization panels
+│
+├─ Hour 12-16: LaTeX Report (ABNT)
+│  • Report structure & formatting
+│  • Methodology documentation
+│  • Results integration with figures
+│  • Bibliography (BibLaTeX)
+│
+└─ Hour 16-20: Final Polish
+   • README design revamp (6 iterations)
+   • PDF compilation & fixes
+   • Bibliography references
+   • Documentation finalization
+```
+
+### 🔥 Commit Highlights
+
+| Phase | Commits | Key Features |
+|-------|---------|--------------|
+| **🏗️ Foundation** | `1a41d49` → `a01397e` | Project initialization, structure setup |
+| **🧠 Core ML** | `c0f102a` → `f387f58` | MLP implementation, K-Fold validation |
+| **🛡️ Regularization** | `7f2d959` → `d5906b1` | Dropout, L2, Early Stopping |
+| **🎯 SOTA** | `6cc0f13` → `d5906b1` | Optuna Bayesian Optimization |
+| **📊 Analysis** | `56d5fcd` → `d19df02` | Notebook execution, results generation |
+| **📄 Documentation** | `4757546` → `608fb49` | LaTeX report, README polish (6 revisions) |
+
+### 💡 Development Philosophy
+
+<table align="center">
+<tr>
+<td align="center" width="33%">
+<strong>🚀 Move Fast</strong><br/><br/>
+<samp>Intensive 20-hour sprint with focused implementation. Rapid prototyping followed by iterative refinement.</samp>
+</td>
+<td align="center" width="33%">
+<strong>🔬 Experiment Driven</strong><br/><br/>
+<samp>Multiple optimization trials (Optuna), A/B testing regularization techniques, continuous validation.</samp>
+</td>
+<td align="center" width="33%">
+<strong>📚 Document Later</strong><br/><br/>
+<samp>Code first, polish documentation after results validation. 6 README iterations for clarity.</samp>
+</td>
+</tr>
+</table>
 
 <br/>
 
