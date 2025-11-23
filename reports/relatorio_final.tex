@@ -19,6 +19,12 @@
 \usepackage{FiraMono}
 
 %----------------------------------------------------------------------------------------
+% CORREÇÃO DE SCALING DE FONTE
+%----------------------------------------------------------------------------------------
+\usepackage{lmodern}      % Torna a fonte padrão (CM) vetorial e escalável
+\usepackage{anyfontsize}  % Permite tamanhos de fonte arbitrários sem avisos
+
+%----------------------------------------------------------------------------------------
 % PACKAGES ESSENCIAIS
 %----------------------------------------------------------------------------------------
 \usepackage{amsmath, amsthm, mathtools, bm, amssymb}
@@ -128,6 +134,23 @@
   fontupper=\bfseries\color{white},
   halign=center, valign=center, boxsep=10pt, #1
 }
+
+%----------------------------------------------------------------------------------------
+% BIBLIOGRAPHY AND REFERENCES
+%----------------------------------------------------------------------------------------
+% Configuração ABNT
+\usepackage{csquotes}
+\usepackage[
+    backend=biber,
+    style=abnt,          % Estilo de formatação ABNT
+    citestyle=authoryear, % Citação tipo (AUTOR, Ano) no texto
+    sorting=nty,          % Ordenar por Nome, Título, Ano
+    url=true,             % Mostrar URLs
+    doi=true              % Mostrar DOIs se houver
+]{biblatex}
+
+% Carrega o arquivo .bib que criei acima
+\addbibresource{referencias.bib}
 
 %----------------------------------------------------------------------------------------
 % LAYOUT SETTINGS (CORRIGIDO: MARGENS SIMÉTRICAS)
@@ -347,13 +370,13 @@ The results showed that the application of dynamic regularization drastically re
 
 \subsection{Contextualização}
 
-A predição de preços imobiliários é um problema clássico de \textbf{regressão} em Machine Learning, com aplicações diretas em planejamento urbano, avaliação de investimentos e políticas públicas. Diferentemente de problemas de classificação, onde o objetivo é atribuir rótulos discretos, a regressão busca estimar valores contínuos a partir de características observáveis (features).
+A predição de preços imobiliários é um problema clássico de \textbf{regressão} em Machine Learning \parencite{bishop2006pattern, james2013statistical, kelleher2015fundamentals}, com aplicações diretas em planejamento urbano, avaliação de investimentos e políticas públicas. Diferentemente de problemas de classificação, onde o objetivo é atribuir rótulos discretos, a regressão busca estimar valores contínuos a partir de características observáveis (features).
 
 Neste projeto, utilizamos o dataset \textit{Boston Housing}, que contém 506 amostras de imóveis residenciais caracterizados por 13 variáveis independentes (taxa de criminalidade, concentração de óxido nítrico, número de cômodos, entre outras) e uma variável dependente: o preço mediano das casas (MEDV, em milhares de dólares).
 
 \subsection{O Desafio da Generalização}
 
-O conceito central deste trabalho é a \textbf{generalização}: a capacidade de um modelo de aprendizado de máquina desempenhar bem em dados \textit{não vistos} durante o treinamento. A generalização está intrinsecamente ligada ao trade-off entre \textbf{viés (bias)} e \textbf{variância (variance)}:
+O conceito central deste trabalho é a \textbf{generalização}: a capacidade de um modelo de aprendizado de máquina desempenhar bem em dados \textit{não vistos} durante o treinamento. A generalização está intrinsecamente ligada ao trade-off entre \textbf{viés (bias)} e \textbf{variância (variance)}, conforme discutido extensivamente por \textcite{hastie2009elements}:
 
 \begin{highlightbox}[title={Conceitos Fundamentais}]
 \begin{itemize}
@@ -367,7 +390,7 @@ Matematicamente, o erro esperado de um modelo pode ser decomposto como:
 \begin{equation}
     \mathbb{E}[(y - \hat{f}(x))^2] = \text{Bias}^2[\hat{f}(x)] + \text{Var}[\hat{f}(x)] + \sigma^2
 \end{equation}
-onde $y$ é o valor real, $\hat{f}(x)$ é a predição do modelo, e $\sigma^2$ é o ruído irredutível.
+onde $y$ é o valor real, $\hat{f}(x)$ é a predição do modelo, e $\sigma^2$ é o ruído irredutível \parencite{hastie2009elements}.
 
 \subsection{Justificativa do K-Fold Cross-Validation}
 
@@ -388,7 +411,7 @@ Em cenários de \textbf{Small Data} (como o Boston Housing, com apenas 506 amost
     \item Implementar um pipeline completo de MLOps para regressão neural.
     \item Prevenir Data Leakage através de normalização correta (StandardScaler ajustado apenas no treino).
     \item Aplicar técnicas de regularização: Dropout, L2 Regularization, Early Stopping e Model Checkpointing.
-    \item Utilizar Otimização Bayesiana (Optuna) para encontrar hiperparâmetros ótimos.
+    \item Utilizar Otimização Bayesiana \parencite{optuna2019} para encontrar hiperparâmetros ótimos.
     \item Analisar quantitativamente e qualitativamente a generalização do modelo.
 \end{itemize}
 
@@ -401,7 +424,7 @@ Em cenários de \textbf{Small Data} (como o Boston Housing, com apenas 506 amost
 
 \subsection{Dataset: Boston Housing}
 
-O dataset foi obtido da fonte original \url{http://lib.stat.cmu.edu/datasets/boston}, compilado por Harrison e Rubinfeld (1978). As 13 features são:
+O dataset foi obtido da fonte original \url{http://lib.stat.cmu.edu/datasets/boston}, compilado e analisado originalmente por \textcite{harrison1978hedonic} e posteriormente revisado sob a ótica de diagnósticos de regressão por \textcite{belsley1980regression}. As 13 features são:
 
 \begin{table}[H]
 \centering
@@ -431,7 +454,7 @@ LSTAT & Porcentagem de população de baixa renda \\ \midrule
 
 \subsubsection{Normalização (StandardScaler)}
 
-A normalização é crítica para redes neurais treinadas via Gradiente Descendente, pois:
+A normalização é crítica para redes neurais treinadas via Gradiente Descendente, conforme estabelecido nos trabalhos seminais de \textcite{lecun1998efficient}, pois:
 
 \begin{enumerate}
     \item \textbf{Acelera a convergência:} Features em escalas diferentes causam superfícies de erro alongadas, dificultando a otimização.
@@ -454,7 +477,7 @@ O StandardScaler é ajustado (\texttt{fit}) \textbf{exclusivamente} nos dados de
 
 \subsubsection{Multi-Layer Perceptron (MLP)}
 
-Implementamos uma rede neural totalmente conectada (feedforward) com a seguinte arquitetura:
+Implementamos uma rede neural totalmente conectada (feedforward) utilizando o framework PyTorch \parencite{paszke2019pytorch}, com a seguinte arquitetura:
 
 \begin{equation}
     \text{Input}(13) \xrightarrow{\text{Linear}} \text{Hidden}_1(64) \xrightarrow{\text{ReLU}} \text{Hidden}_2(32) \xrightarrow{\text{ReLU}} \text{Output}(1)
@@ -473,7 +496,7 @@ Implementamos uma rede neural totalmente conectada (feedforward) com a seguinte 
     \text{ReLU}(x) = \max(0, x)
 \end{equation}
 
-A ReLU resolve o problema de desaparecimento de gradiente e acelera o treinamento.
+A ReLU resolve o problema de desaparecimento de gradiente e acelera o treinamento, propriedades fundamentais demonstradas por \textcite{nair2010relu} e analisadas por \textcite{glorot2011deep}.
 
 \textbf{Inicialização de Pesos:} Utilizamos inicialização Xavier (Glorot Uniform) para garantir variâncias consistentes entre camadas:
 
@@ -487,7 +510,7 @@ Após detectar overfitting severo no modelo inicial (Gap de 181\% entre treino e
 
 \subsubsection{Dropout}
 
-Implementamos \textbf{Dropout} com taxa de $p=0.3$ (30\%) após cada camada oculta. Durante o treinamento, neurônios são "desligados" aleatoriamente:
+Implementamos \textbf{Dropout} com taxa de $p=0.3$ (30\%) após cada camada oculta. Durante o treinamento, neurônios são "desligados" aleatoriamente. Segundo \textcite{srivastava2014dropout}:
 
 \begin{equation}
 \text{Dropout}(x) = \begin{cases}
@@ -512,7 +535,7 @@ O gradiente resultante "puxa" os pesos para zero:
 \frac{\partial L}{\partial w_j} = \frac{\partial L_{\text{MSE}}}{\partial w_j} + 2\lambda w_j
 \end{equation}
 
-Isso previne pesos excessivamente grandes e suaviza as superfícies de decisão.
+Isso previne pesos excessivamente grandes e suaviza as superfícies de decisão \parencite{bishop2006pattern}.
 
 \subsection{Protocolo de Treinamento}
 
@@ -528,7 +551,7 @@ O MSE penaliza erros grandes de forma quadrática, sendo sensível a outliers.
 
 \subsubsection{Otimizador}
 
-Utilizamos o \textbf{Adam} (Adaptive Moment Estimation) com taxa de aprendizado $\alpha = 0.001$:
+Utilizamos o \textbf{Adam} (Adaptive Moment Estimation), proposto por \textcite{kingma2015adam}, com taxa de aprendizado $\alpha = 0.001$:
 
 \begin{align}
     m_t &= \beta_1 m_{t-1} + (1-\beta_1)g_t \\
@@ -562,7 +585,7 @@ Seed (Reprodutibilidade) & 42 \\ \bottomrule
 
 \subsubsection{Early Stopping}
 
-O Early Stopping monitora o erro de validação e interrompe o treinamento se não houver melhoria por $P$ épocas consecutivas (patience). Isso previne overfitting ao parar antes que o modelo comece a "memorizar" o conjunto de treino.
+O Early Stopping monitora o erro de validação e interrompe o treinamento se não houver melhoria por $P$ épocas consecutivas (patience). Isso previne overfitting ao parar antes que o modelo comece a "memorizar" o conjunto de treino \parencite{goodfellow2016deep}.
 
 \textbf{Algoritmo:}
 
@@ -608,7 +631,7 @@ Salvamos apenas o estado do modelo com o \textit{menor} erro de validação usan
 
 \subsection{Otimização Bayesiana de Hiperparâmetros}
 
-Para alcançar o estado da arte, aplicamos \textbf{Otimização Bayesiana} usando a biblioteca Optuna. Esta técnica supera o Grid Search tradicional ao aprender com resultados de trials anteriores.
+Para alcançar o estado da arte, aplicamos \textbf{Otimização Bayesiana} usando a biblioteca Optuna \parencite{optuna2019}. Esta técnica supera o Grid Search tradicional e o Random Search \parencite{bergstra2012random} ao aprender com resultados de trials anteriores.
 
 \subsubsection{Espaço de Busca}
 
@@ -629,7 +652,7 @@ Otimizamos simultaneamente 8 hiperparâmetros:
 
 O algoritmo \textbf{TPE (Tree-structured Parzen Estimator)} constrói um modelo probabilístico $p(\theta | y)$ da distribuição de hiperparâmetros $\theta$ dado o desempenho $y$.
 
-O \textbf{HyperbandPruner} interrompe trials não-promissores precocemente, economizando até 70\% do tempo computacional. Se após 10 épocas um trial apresenta MSE muito superior ao melhor resultado atual, ele é podado (\textit{pruned}).
+O \textbf{HyperbandPruner} interrompe trials não promissores precocemente, economizando até 70\% do tempo computacional \parencite{optuna2019}. Se após 10 épocas um trial apresenta MSE muito superior ao melhor resultado atual, ele é podado (\textit{pruned}).
 
 Executamos \textbf{20 trials} com K-Fold (K=3) acelerado para eficiência. O melhor conjunto de hiperparâmetros é então retreinado com K=5 para avaliação final robusta.
 
@@ -780,7 +803,7 @@ A Figura \ref{fig:predictions} mostra os gráficos de dispersão entre valores r
 
 \subsubsection{Análise de Generalização}
 
-Classificamos o desempenho final como \textbf{Boa Generalização}, baseado em três critérios:
+Classificamos o desempenho final como \textbf{Boa Generalização} \parencite{hastie2009elements}, baseado em três critérios:
 
 \begin{enumerate}
     \item \textbf{MSE de Validação Aceitável:} MSE médio de 13.02 (otimizado) e 13.47 (base) representam erros quadráticos médios de aproximadamente \$3.60 e \$3.67 mil dólares, respectivamente, considerando que MEDV está em escala de \$1000.
@@ -793,7 +816,7 @@ Classificamos o desempenho final como \textbf{Boa Generalização}, baseado em t
 \subsubsection{Impacto das Técnicas MLOps}
 
 \begin{enumerate}
-    \item \textbf{Dropout (30\%):} Reduziu drasticamente o overfitting inicial. O gap treino-validação caiu de 181\% para aproximadamente 30-40\%, demonstrando a eficácia da regularização estocástica.
+    \item \textbf{Dropout (30\%):} Reduziu drasticamente o overfitting inicial. O gap treino-validação caiu de 181\% para aproximadamente 30-40\%, demonstrando a eficácia da regularização estocástica \parencite{srivastava2014dropout}.
     
     \item \textbf{L2 Regularization ($\lambda=10^{-4}$):} Complementou o Dropout ao penalizar pesos grandes, resultando em superfícies de decisão mais suaves.
     
@@ -871,47 +894,12 @@ A construção de modelos de Machine Learning vai além da escolha de arquitetur
 
 Este projeto serve como template para futuros trabalhos em Engenharia Elétrica e áreas correlatas, demonstrando que a interseção entre teoria matemática (bias-variance tradeoff), implementação prática (PyTorch), e boas práticas de engenharia (MLOps) resulta em soluções robustas e de alta qualidade.
 
-% ============================================================================
-% REFERÊNCIAS (PLACEHOLDER)
-% ============================================================================
-\begin{thebibliography}{9}
-
-\bibitem{hastie2009elements}
-Hastie, T., Tibshirani, R., \& Friedman, J. (2009).
-\textit{The Elements of Statistical Learning: Data Mining, Inference, and Prediction}.
-Springer Series in Statistics.
-
-\bibitem{goodfellow2016deep}
-Goodfellow, I., Bengio, Y., \& Courville, A. (2016).
-\textit{Deep Learning}.
-MIT Press.
-
-\bibitem{bishop2006pattern}
-Bishop, C. M. (2006).
-\textit{Pattern Recognition and Machine Learning}.
-Springer.
-
-\bibitem{paszke2019pytorch}
-Paszke, A., Gross, S., Massa, F., et al. (2019).
-PyTorch: An Imperative Style, High-Performance Deep Learning Library.
-\textit{Advances in Neural Information Processing Systems}, 32.
-
-\bibitem{harrison1978hedonic}
-Harrison, D., \& Rubinfeld, D. L. (1978).
-Hedonic housing prices and the demand for clean air.
-\textit{Journal of Environmental Economics and Management}, 5(1), 81-102.
-
-\bibitem{optuna2019}
-Akiba, T., Sano, S., Yanase, T., Ohta, T., \& Koyama, M. (2019).
-Optuna: A Next-generation Hyperparameter Optimization Framework.
-\textit{Proceedings of the 25th ACM SIGKDD International Conference on Knowledge Discovery \& Data Mining}, 2623-2631.
-
-\bibitem{srivastava2014dropout}
-Srivastava, N., Hinton, G., Krizhevsky, A., Sutskever, I., \& Salakhutdinov, R. (2014).
-Dropout: A Simple Way to Prevent Neural Networks from Overfitting.
-\textit{Journal of Machine Learning Research}, 15(56), 1929-1958.
-
-\end{thebibliography}
+%----------------------------------------------------------------------------------------
+% BIBLIOGRAPHY
+%----------------------------------------------------------------------------------------
+\clearpage
+\nocite{*} 
+\printbibliography[heading=bibintoc, title={Referências Bibliográficas}]
 
 % ============================================================================
 % APÊNDICES (OPCIONAL)
