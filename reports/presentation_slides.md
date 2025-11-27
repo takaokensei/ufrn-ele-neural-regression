@@ -10,6 +10,8 @@
 
 **Matrícula:** 20220014216  
 
+**Orientador:** Prof. Dr. Allan de Medeiros Martins  
+
 **UFRN - Engenharia Elétrica - ELE 604**  
 
 **Novembro de 2025**
@@ -289,6 +291,6 @@ A combinação de **Regularização (Dropout/L2)** com **Otimização Bayesiana*
 
 **Cauã Vitor Figueredo Silva**
 
-`cauavitor@ufrn.edu.br`
+`cauavitorfigueredo@gmail.com`
 
 UFRN - Engenharia Elétrica
