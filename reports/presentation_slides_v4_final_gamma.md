@@ -24,17 +24,38 @@
 
 # Análise de Features e Correlação
 
-**Entendendo o Alvo (MEDV - Preço em k$)**
+**Entendendo o Alvo (MEDV - Preço Mediano em k$)**
 
-Variáveis determinantes (Correlação de Pearson):
+**Legenda das Features:**
+* **CRIM:** Taxa de criminalidade per capita
+* **ZN:** Proporção de terrenos residenciais zoneados
+* **INDUS:** Proporção de acres comerciais não-varejo
+* **CHAS:** Limita com rio Charles (1=sim, 0=não)
+* **NOX:** Concentração de óxidos de nitrogênio
+* **RM:** Número médio de quartos por habitação
+* **AGE:** Proporção de unidades ocupadas construídas antes de 1940
+* **DIS:** Distância ponderada aos centros de emprego
+* **RAD:** Índice de acessibilidade a rodovias radiais
+* **TAX:** Taxa de imposto sobre propriedade
+* **PTRATIO:** Razão aluno-professor por cidade
+* **B:** Proporção de negros por cidade
+* **LSTAT:** % de população de baixa renda
+* **MEDV:** Preço mediano de casas (target)
+
+**Variáveis Determinantes (Correlação de Pearson com MEDV):**
 
 * **LSTAT (-0.74):** População de baixa renda (Fator negativo forte)
-
 * **RM (+0.70):** Número de quartos (Fator positivo forte)
+* **PTRATIO (-0.51):** Razão aluno-professor (Fator negativo moderado)
 
-* **PTRATIO (-0.51):** Razão aluno-professor
+**Interpretação do Mapa de Correlação:**
+* 🔴 **Vermelho:** Correlação positiva (quanto maior a feature, maior o preço)
+* 🔵 **Azul:** Correlação negativa (quanto maior a feature, menor o preço)
+* ⚪ **Branco/Claro:** Correlação próxima de zero (sem relação linear)
 
 > **Ponto de Atenção:** A escassez de dados exige validação cruzada rigorosa
+
+**[IMAGEM: `reports/figures/correlation_matrix.png` - Matriz de correlação de Pearson destacando LSTAT, RM e PTRATIO]**
 
 ---
 
@@ -96,6 +117,8 @@ Variáveis determinantes (Correlação de Pearson):
 
 * **Eficiência:** 20 trials concluídos em **25 minutos** (vs. ~5h de Grid Search)
 
+**[IMAGEM: `reports/figures/optuna_optimization_history.png` - Histórico de otimização Optuna]**
+
 ---
 
 # Resultados: Redução de Overfitting
@@ -108,6 +131,8 @@ Variáveis determinantes (Correlação de Pearson):
 
 * **Conclusão:** Redução de **80% no overfitting** com a introdução de regularização e otimização
 
+**[IMAGEM: `reports/figures/learning_curves.png` (esquerda) e `reports/figures/learning_curves_optimized.png` (direita) - Curvas de aprendizado lado a lado]**
+
 ---
 
 # Comparativo de Performance
@@ -117,10 +142,12 @@ Variáveis determinantes (Correlação de Pearson):
 | Métrica | Baseline | Otimizado (Optuna) | Variação |
 | :--- | :--- | :--- | :--- |
 | **MSE** | 13.47 | **13.02** | -3.3% (Melhor) |
-| **R²** | 0.852 | **0.857** | +0.5% (Melhor) |
+| **R²** | 0.852 | **0.857** (média) / **0.927** (melhor fold) | +0.5% (Melhor) |
 | **Desvio Padrão** | 2.47 | 4.62 | + Variância |
 
 > **Insight:** O modelo otimizado é mais preciso na média, mas o aumento no desvio padrão reflete a sensibilidade do *Small Data* em folds específicos
+
+**[IMAGEM OPCIONAL: `reports/figures/kfold_results.png` - Resultados por fold]**
 
 ---
 
@@ -128,11 +155,14 @@ Variáveis determinantes (Correlação de Pearson):
 
 **Performance em Dados Não Vistos**
 
-* **R² Final:** **0.857** (Explicamos 85.7% da variância)
+* **R² Final (Média):** **0.857** (Explicamos 85.7% da variância)
+* **R² Melhor Fold:** **0.927** (Fold 4 - 92.7% da variância)
 
 * **Erro Médio:** ~$3.600 (para imóveis de ~$22.500)
 
 * **Diagnóstico:** Resíduos distribuídos uniformemente, indicando ausência de viés sistemático significativo
+
+**[IMAGEM: `reports/figures/predictions_scatter_optimized.png` - Scatter plot Real vs Predito com linha de identidade]**
 
 ---
 
@@ -163,4 +193,3 @@ Variáveis determinantes (Correlação de Pearson):
 **Cauã Vitor Figueredo Silva**
 
 `cauavitorfigueredo@gmail.com`
-
