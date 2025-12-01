@@ -441,21 +441,62 @@ def inject_keyboard_shortcuts():
     """Injeta JavaScript para atalhos de teclado."""
     st.markdown("""
     <script>
-    document.addEventListener('keydown', function(e) {
-        // Alt + 1,2,3,4 para navegação rápida
-        if (e.altKey && !e.ctrlKey && !e.shiftKey) {
-            const pageIndex = parseInt(e.key) - 1;
-            if (pageIndex >= 0 && pageIndex <= 3) {
-                const radioButtons = document.querySelectorAll('input[type="radio"][name*="navigation"]');
-                if (radioButtons[pageIndex]) {
-                    radioButtons[pageIndex].click();
-                    // Trigger change event
-                    const event = new Event('change', { bubbles: true });
-                    radioButtons[pageIndex].dispatchEvent(event);
+    (function() {
+        function setupKeyboardShortcuts() {
+            document.addEventListener('keydown', function(e) {
+                // Alt + 1,2,3,4 para navegação rápida
+                if (e.altKey && !e.ctrlKey && !e.shiftKey && !e.metaKey) {
+                    const key = e.key;
+                    const pageIndex = parseInt(key) - 1;
+                    
+                    if (pageIndex >= 0 && pageIndex <= 3) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        // Encontrar os radio buttons da navegação
+                        const radioGroup = document.querySelector('div[role="radiogroup"]');
+                        if (radioGroup) {
+                            const radioButtons = radioGroup.querySelectorAll('input[type="radio"]');
+                            if (radioButtons && radioButtons[pageIndex]) {
+                                radioButtons[pageIndex].click();
+                                radioButtons[pageIndex].focus();
+                                
+                                // Forçar rerun do Streamlit
+                                const changeEvent = new Event('change', { bubbles: true, cancelable: true });
+                                radioButtons[pageIndex].dispatchEvent(changeEvent);
+                                
+                                // Feedback visual
+                                const labels = radioGroup.querySelectorAll('label');
+                                if (labels[pageIndex]) {
+                                    labels[pageIndex].style.background = 'rgba(74, 144, 226, 0.3)';
+                                    setTimeout(() => {
+                                        labels[pageIndex].style.background = '';
+                                    }, 300);
+                                }
+                            }
+                        }
+                    }
                 }
-            }
+            }, true); // Use capture phase
         }
-    });
+        
+        // Executar quando DOM estiver pronto
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', setupKeyboardShortcuts);
+        } else {
+            setupKeyboardShortcuts();
+        }
+        
+        // Re-executar após reruns do Streamlit
+        const observer = new MutationObserver(function(mutations) {
+            setupKeyboardShortcuts();
+        });
+        
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    })();
     </script>
     """, unsafe_allow_html=True)
 
@@ -496,6 +537,136 @@ def inject_high_contrast_mode():
     
     .stSlider > div > div > div > div {
         background: #FFFFFF !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+
+def inject_light_mode():
+    """Injeta CSS para modo claro."""
+    st.markdown("""
+    <style>
+    /* Override dark theme with light theme */
+    .main {
+        background-color: #FFFFFF !important;
+        color: #1E1E1E !important;
+    }
+    
+    section[data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #F5F5F5 0%, #E8E8E8 100%) !important;
+        border-right: 1px solid rgba(74, 144, 226, 0.3) !important;
+    }
+    
+    h1 {
+        background: linear-gradient(90deg, #4A90E2 0%, #51CF66 100%) !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+    }
+    
+    h2 {
+        color: #4A90E2 !important;
+        border-left: 4px solid #4A90E2 !important;
+    }
+    
+    h3 {
+        color: #51CF66 !important;
+    }
+    
+    p, span, div, label {
+        color: #1E1E1E !important;
+    }
+    
+    div[data-testid="metric-container"] {
+        background: rgba(255, 255, 255, 0.9) !important;
+        border: 1px solid rgba(74, 144, 226, 0.4) !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+    }
+    
+    div[data-testid="metric-container"]:hover {
+        box-shadow: 0 8px 25px rgba(74, 144, 226, 0.2) !important;
+        border-color: rgba(74, 144, 226, 0.6) !important;
+    }
+    
+    div[data-testid="stExpander"] {
+        background: rgba(255, 255, 255, 0.7) !important;
+        border: 1px solid rgba(74, 144, 226, 0.3) !important;
+    }
+    
+    .stButton > button[kind="primary"] {
+        background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%) !important;
+        color: #FFFFFF !important;
+    }
+    
+    .stButton > button {
+        background: #FFFFFF !important;
+        color: #1E1E1E !important;
+        border: 1px solid rgba(74, 144, 226, 0.4) !important;
+    }
+    
+    .stButton > button:hover {
+        background: rgba(74, 144, 226, 0.1) !important;
+        border-color: rgba(74, 144, 226, 0.6) !important;
+    }
+    
+    div[role="radiogroup"] label {
+        background: rgba(255, 255, 255, 0.8) !important;
+        border: 1px solid rgba(74, 144, 226, 0.3) !important;
+        color: #1E1E1E !important;
+    }
+    
+    div[role="radiogroup"] label:hover {
+        background: rgba(74, 144, 226, 0.15) !important;
+    }
+    
+    div[role="radiogroup"] label[data-checked="true"] {
+        background: rgba(74, 144, 226, 0.25) !important;
+        border-color: #4A90E2 !important;
+        color: #1E1E1E !important;
+    }
+    
+    .stSlider label, .stSelectbox label {
+        color: #1E1E1E !important;
+    }
+    
+    div[data-testid="stDataFrame"] {
+        background: #FFFFFF !important;
+        border: 1px solid rgba(74, 144, 226, 0.3) !important;
+    }
+    
+    .stInfo {
+        background: rgba(74, 144, 226, 0.15) !important;
+        border-left: 4px solid #4A90E2 !important;
+        color: #1E1E1E !important;
+    }
+    
+    .stWarning {
+        background: rgba(255, 217, 61, 0.2) !important;
+        border-left: 4px solid #FFD93D !important;
+        color: #1E1E1E !important;
+    }
+    
+    .stSuccess {
+        background: rgba(81, 207, 102, 0.15) !important;
+        border-left: 4px solid #51CF66 !important;
+        color: #1E1E1E !important;
+    }
+    
+    .stError {
+        background: rgba(255, 107, 107, 0.15) !important;
+        border-left: 4px solid #FF6B6B !important;
+        color: #1E1E1E !important;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background: #F5F5F5;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: #4A90E2;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        background: #357ABD;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -555,19 +726,47 @@ def main():
             key="navigation_radio"
         )
         
-        # Modo de alto contraste
+        # Modos de visualização
         st.markdown("---")
-        high_contrast = st.toggle("🔆 Modo Alto Contraste", value=False, key="high_contrast_toggle")
-        if high_contrast:
+        st.markdown("### 🎨 Modos de Visualização")
+        
+        # Inicializar modo claro no session_state
+        if 'light_mode' not in st.session_state:
+            st.session_state.light_mode = False
+        if 'high_contrast_mode' not in st.session_state:
+            st.session_state.high_contrast_mode = False
+        
+        # Toggle para modo claro
+        light_mode = st.toggle("☀️ Modo Claro", value=st.session_state.light_mode, key="light_mode_toggle")
+        if light_mode != st.session_state.light_mode:
+            st.session_state.light_mode = light_mode
+            st.rerun()
+        
+        # Toggle para modo alto contraste (desabilita se modo claro estiver ativo)
+        high_contrast = st.toggle(
+            "🔆 Modo Alto Contraste", 
+            value=st.session_state.high_contrast_mode, 
+            key="high_contrast_toggle",
+            disabled=st.session_state.light_mode
+        )
+        if high_contrast != st.session_state.high_contrast_mode:
+            st.session_state.high_contrast_mode = high_contrast
+            st.rerun()
+        
+        # Aplicar modos
+        if st.session_state.light_mode:
+            inject_light_mode()
+        elif st.session_state.high_contrast_mode:
             inject_high_contrast_mode()
         
         # Adicionar atalhos de teclado (legenda)
+        st.markdown("---")
         st.markdown("""
         <div style="
             background: rgba(30, 37, 48, 0.5);
             padding: 1rem;
             border-radius: 8px;
-            margin-top: 2rem;
+            margin-top: 1rem;
             font-size: 0.85rem;
             border: 1px solid rgba(74, 144, 226, 0.2);
         ">
@@ -576,7 +775,7 @@ def main():
         </div>
         """, unsafe_allow_html=True)
         
-        # Injetar JavaScript para atalhos
+        # Injetar JavaScript para atalhos (sempre, independente do modo)
         inject_keyboard_shortcuts()
         
         st.markdown("---")
