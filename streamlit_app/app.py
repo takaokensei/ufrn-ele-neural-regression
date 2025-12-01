@@ -762,13 +762,13 @@ def _show_prediction_page():
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        st.button("🏆 Imóvel Premium", use_container_width=True, on_click=apply_premium, key="btn_premium_main")
+        st.button("🏆 Imóvel Premium", width='stretch', on_click=apply_premium, key="btn_premium_main")
     
     with col2:
-        st.button("💼 Imóvel Econômico", use_container_width=True, on_click=apply_economico, key="btn_economico_main")
+        st.button("💼 Imóvel Econômico", width='stretch', on_click=apply_economico, key="btn_economico_main")
     
     with col3:
-        st.button("📊 Imóvel Médio", use_container_width=True, on_click=apply_medio, key="btn_medio_main")
+        st.button("📊 Imóvel Médio", width='stretch', on_click=apply_medio, key="btn_medio_main")
     
     # Feature descriptions
     feature_descriptions = {
@@ -947,7 +947,7 @@ def _show_prediction_page():
         
     # Botão de predição (fora do form)
     st.markdown("---")
-    submitted = st.button("🔮 Prever Preço", use_container_width=True, type="primary")
+    submitted = st.button("🔮 Prever Preço", width='stretch', type="primary")
     
     if submitted:
         # Converter features para lista na ordem correta
@@ -1080,7 +1080,7 @@ def _show_metrics_page():
     }
     
     df_comparison = pd.DataFrame(comparison_data)
-    st.dataframe(df_comparison, use_container_width=True, hide_index=True)
+    st.dataframe(df_comparison, width='stretch', hide_index=True)
     
     # Gráfico K-Fold
     st.markdown("---")
@@ -1141,7 +1141,7 @@ def _show_metrics_page():
         template="plotly_dark"
     )
     
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width='stretch')
     
     st.info("""
     **📌 Observação:** O Fold 3 apresentou comportamento outlier (MSE=21.03), 
@@ -1260,7 +1260,7 @@ def _show_features_page():
         template="plotly_dark"
     )
     
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width='stretch')
     
     # Legenda de Features
     st.markdown("---")
@@ -1288,7 +1288,7 @@ def _show_features_page():
         for k, v in feature_descriptions.items()
     ])
     
-    st.dataframe(df_features, use_container_width=True, hide_index=True)
+    st.dataframe(df_features, width='stretch', hide_index=True)
     
     st.info("""
     As correlações mais fortes (RM +0.70 e LSTAT -0.74) explicam a maior parte da 
@@ -1371,7 +1371,7 @@ def _show_dashboard_page():
     
     # Substituir skeleton pelo gráfico real
     chart_placeholder.empty()
-    st.plotly_chart(fig_curves, use_container_width=True)
+    st.plotly_chart(fig_curves, width='stretch')
     
     # Grid layout para métricas
     st.markdown("""
@@ -1447,7 +1447,7 @@ def _show_dashboard_page():
     
     # Substituir skeleton pelo gráfico real
     scatter_placeholder.empty()
-    st.plotly_chart(fig_scatter, use_container_width=True)
+    st.plotly_chart(fig_scatter, width='stretch')
     
     col1, col2, col3 = st.columns(3)
     mse_scatter = np.mean((y_true - y_pred) ** 2)
@@ -1502,7 +1502,7 @@ def _show_dashboard_page():
     
     # Substituir skeleton pelo gráfico real
     optuna_placeholder.empty()
-    st.plotly_chart(fig_optuna, use_container_width=True)
+    st.plotly_chart(fig_optuna, width='stretch')
     
     # Importância de Hiperparâmetros com skeleton
     st.markdown("---")
@@ -1532,7 +1532,7 @@ def _show_dashboard_page():
     
     # Substituir skeleton pelo gráfico real
     importance_placeholder.empty()
-    st.plotly_chart(fig_importance, use_container_width=True)
+    st.plotly_chart(fig_importance, width='stretch')
 
 if __name__ == "__main__":
     main()
