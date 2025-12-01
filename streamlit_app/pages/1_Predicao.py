@@ -93,203 +93,217 @@ feature_descriptions = {
     "LSTAT": "% de população de baixa renda"
 }
 
+# Função helper para alinhar valores com steps
+def align_value(value, min_val, max_val, step):
+    """Alinha um valor com o step do slider"""
+    # Garantir que está dentro dos limites
+    value = max(min_val, min(max_val, value))
+    # Alinhar com o step
+    if step > 0:
+        # Arredondar para o múltiplo mais próximo do step
+        value = round(value / step) * step
+    return value
+
 # Inicializar session_state para features
 if 'feature_values' not in st.session_state:
     st.session_state.feature_values = defaults.copy()
-if 'scenario_selected' not in st.session_state:
-    st.session_state.scenario_selected = None
 
-# Cenários pré-configurados (valores alinhados com os steps dos sliders)
+# Cenários pré-configurados
 scenarios = {
     "Premium": {
-        "CRIM": round(0.1, 1), "ZN": round(25.0, 1), "INDUS": round(2.0, 1), 
-        "CHAS": 1.0, "NOX": round(0.4, 3), "RM": round(7.5, 1), 
-        "AGE": round(10.0, 1), "DIS": round(5.0, 1), "RAD": 3.0, 
-        "TAX": 250.0, "PTRATIO": round(15.0, 1), "B": round(395.0, 1), 
-        "LSTAT": round(2.0, 1)
+        "CRIM": 0.1, "ZN": 25.0, "INDUS": 2.0, "CHAS": 1.0, "NOX": 0.4,
+        "RM": 7.5, "AGE": 10.0, "DIS": 5.0, "RAD": 3.0, "TAX": 250.0,
+        "PTRATIO": 15.0, "B": 395.0, "LSTAT": 2.0
     },
     "Econômico": {
-        "CRIM": round(10.0, 1), "ZN": 0.0, "INDUS": round(20.0, 1), 
-        "CHAS": 0.0, "NOX": round(0.7, 3), "RM": round(5.5, 1), 
-        "AGE": round(90.0, 1), "DIS": round(2.0, 1), "RAD": 20.0, 
-        "TAX": 600.0, "PTRATIO": round(20.0, 1), "B": round(200.0, 1), 
-        "LSTAT": round(30.0, 1)
+        "CRIM": 10.0, "ZN": 0.0, "INDUS": 20.0, "CHAS": 0.0, "NOX": 0.7,
+        "RM": 5.5, "AGE": 90.0, "DIS": 2.0, "RAD": 20.0, "TAX": 600.0,
+        "PTRATIO": 20.0, "B": 200.0, "LSTAT": 30.0
     },
     "Médio": defaults
 }
 
-# Seção de Testes Rápidos (ANTES dos sliders)
+# Seção de Testes Rápidos
 st.markdown("### 🚀 Testes Rápidos")
 col1, col2, col3 = st.columns(3)
 
+# Funções de callback para atualizar valores
+def apply_premium():
+    """Aplica valores do cenário Premium"""
+    for key, val in scenarios["Premium"].items():
+        min_val, max_val = ranges[key]
+        step = 0.1 if key not in ['RAD', 'TAX', 'CHAS', 'NOX'] else (1.0 if key in ['RAD', 'TAX'] else (1.0 if key == 'CHAS' else 0.001))
+        st.session_state[f"feature_{key}"] = align_value(val, min_val, max_val, step)
+
+def apply_economico():
+    """Aplica valores do cenário Econômico"""
+    for key, val in scenarios["Econômico"].items():
+        min_val, max_val = ranges[key]
+        step = 0.1 if key not in ['RAD', 'TAX', 'CHAS', 'NOX'] else (1.0 if key in ['RAD', 'TAX'] else (1.0 if key == 'CHAS' else 0.001))
+        st.session_state[f"feature_{key}"] = align_value(val, min_val, max_val, step)
+
+def apply_medio():
+    """Aplica valores do cenário Médio"""
+    for key, val in scenarios["Médio"].items():
+        min_val, max_val = ranges[key]
+        step = 0.1 if key not in ['RAD', 'TAX', 'CHAS', 'NOX'] else (1.0 if key in ['RAD', 'TAX'] else (1.0 if key == 'CHAS' else 0.001))
+        st.session_state[f"feature_{key}"] = align_value(val, min_val, max_val, step)
+
 with col1:
-    if st.button("🏆 Imóvel Premium", use_container_width=True, key="btn_premium_page"):
-        st.session_state.feature_values = scenarios["Premium"].copy()
-        st.session_state.scenario_selected = "Premium"
-        st.rerun()
+    st.button("🏆 Imóvel Premium", use_container_width=True, on_click=apply_premium, key="btn_premium")
 
 with col2:
-    if st.button("💼 Imóvel Econômico", use_container_width=True, key="btn_economico_page"):
-        st.session_state.feature_values = scenarios["Econômico"].copy()
-        st.session_state.scenario_selected = "Econômico"
-        st.rerun()
+    st.button("💼 Imóvel Econômico", use_container_width=True, on_click=apply_economico, key="btn_economico")
 
 with col3:
-    if st.button("📊 Imóvel Médio", use_container_width=True, key="btn_medio_page"):
-        st.session_state.feature_values = scenarios["Médio"].copy()
-        st.session_state.scenario_selected = "Médio"
-        st.rerun()
+    st.button("📊 Imóvel Médio", use_container_width=True, on_click=apply_medio, key="btn_medio")
 
-# Mostrar qual cenário está ativo
-if st.session_state.scenario_selected:
-    scenario_name = st.session_state.scenario_selected
-    st.success(f"✅ Cenário **{scenario_name}** aplicado! Os valores dos sliders foram atualizados abaixo.")
-    # Limpar flag após mostrar
-    st.session_state.scenario_selected = None
-
-# Formulário de input (SEM form para permitir atualização dinâmica)
+# Formulário de input
 st.markdown("---")
 st.markdown("### 📝 Características do Imóvel")
-
-# Usar valores do session_state se um cenário foi selecionado, senão usar defaults
-scenario_key = st.session_state.scenario_selected if st.session_state.scenario_selected else "default"
-current_values = st.session_state.feature_values
 
 col1, col2 = st.columns(2)
 
 features = {}
 
+# Inicializar valores no session_state se não existirem
+for key in defaults.keys():
+    if f"feature_{key}" not in st.session_state:
+        st.session_state[f"feature_{key}"] = defaults[key]
+
 with col1:
     st.markdown("#### Características Demográficas e Sociais")
+    
     features['CRIM'] = st.slider(
         f"**CRIM** - {feature_descriptions['CRIM']}",
         min_value=float(ranges['CRIM'][0]),
         max_value=float(ranges['CRIM'][1]),
-        value=float(current_values.get('CRIM', defaults['CRIM'])),
+        value=float(st.session_state.get("feature_CRIM", defaults['CRIM'])),
         step=0.1,
         help="Taxa de criminalidade per capita",
-        key=f"slider_CRIM_page_{scenario_key}"
+        key="feature_CRIM"
     )
-        
+    
     features['ZN'] = st.slider(
         f"**ZN** - {feature_descriptions['ZN']}",
         min_value=float(ranges['ZN'][0]),
         max_value=float(ranges['ZN'][1]),
-        value=float(current_values.get('ZN', defaults['ZN'])),
+        value=float(st.session_state.get("feature_ZN", defaults['ZN'])),
         step=0.1,
-        key=f"slider_ZN_page_{scenario_key}"
+        key="feature_ZN"
     )
     
     features['INDUS'] = st.slider(
         f"**INDUS** - {feature_descriptions['INDUS']}",
         min_value=float(ranges['INDUS'][0]),
         max_value=float(ranges['INDUS'][1]),
-        value=float(current_values.get('INDUS', defaults['INDUS'])),
+        value=float(st.session_state.get("feature_INDUS", defaults['INDUS'])),
         step=0.1,
-        key=f"slider_INDUS_page_{scenario_key}"
+        key="feature_INDUS"
     )
     
-    chas_value = current_values.get('CHAS', defaults['CHAS'])
-    chas_index = 1 if chas_value == 1.0 else 0
+    chas_val = st.session_state.get("feature_CHAS", defaults['CHAS'])
+    chas_index = 1 if chas_val == 1.0 else 0
     features['CHAS'] = st.selectbox(
         f"**CHAS** - {feature_descriptions['CHAS']}",
         options=[0.0, 1.0],
         index=chas_index,
         format_func=lambda x: "Sim" if x == 1.0 else "Não",
-        key=f"select_CHAS_page_{scenario_key}"
+        key="feature_CHAS"
     )
     
     features['NOX'] = st.slider(
         f"**NOX** - {feature_descriptions['NOX']}",
         min_value=float(ranges['NOX'][0]),
         max_value=float(ranges['NOX'][1]),
-        value=float(current_values.get('NOX', defaults['NOX'])),
+        value=float(st.session_state.get("feature_NOX", defaults['NOX'])),
         step=0.001,
         format="%.3f",
-        key=f"slider_NOX_page_{scenario_key}"
+        key="feature_NOX"
     )
     
     features['RM'] = st.slider(
         f"**RM** - {feature_descriptions['RM']}",
         min_value=float(ranges['RM'][0]),
         max_value=float(ranges['RM'][1]),
-        value=float(current_values.get('RM', defaults['RM'])),
+        value=float(st.session_state.get("feature_RM", defaults['RM'])),
         step=0.1,
         help="Número médio de quartos (correlação positiva forte com preço)",
-        key=f"slider_RM_page_{scenario_key}"
+        key="feature_RM"
     )
     
     features['AGE'] = st.slider(
         f"**AGE** - {feature_descriptions['AGE']}",
         min_value=float(ranges['AGE'][0]),
         max_value=float(ranges['AGE'][1]),
-        value=float(current_values.get('AGE', defaults['AGE'])),
+        value=float(st.session_state.get("feature_AGE", defaults['AGE'])),
         step=0.1,
-        key=f"slider_AGE_page_{scenario_key}"
+        key="feature_AGE"
     )
 
 with col2:
     st.markdown("#### Características de Localização e Infraestrutura")
+    
     features['DIS'] = st.slider(
         f"**DIS** - {feature_descriptions['DIS']}",
         min_value=float(ranges['DIS'][0]),
         max_value=float(ranges['DIS'][1]),
-        value=float(current_values.get('DIS', defaults['DIS'])),
+        value=float(st.session_state.get("feature_DIS", defaults['DIS'])),
         step=0.1,
-        key=f"slider_DIS_page_{scenario_key}"
+        key="feature_DIS"
     )
     
     features['RAD'] = st.slider(
         f"**RAD** - {feature_descriptions['RAD']}",
         min_value=float(ranges['RAD'][0]),
         max_value=float(ranges['RAD'][1]),
-        value=float(current_values.get('RAD', defaults['RAD'])),
+        value=float(st.session_state.get("feature_RAD", defaults['RAD'])),
         step=1.0,
-        key=f"slider_RAD_page_{scenario_key}"
+        key="feature_RAD"
     )
     
     features['TAX'] = st.slider(
         f"**TAX** - {feature_descriptions['TAX']}",
         min_value=float(ranges['TAX'][0]),
         max_value=float(ranges['TAX'][1]),
-        value=float(current_values.get('TAX', defaults['TAX'])),
+        value=float(st.session_state.get("feature_TAX", defaults['TAX'])),
         step=1.0,
-        key=f"slider_TAX_page_{scenario_key}"
+        key="feature_TAX"
     )
     
     features['PTRATIO'] = st.slider(
         f"**PTRATIO** - {feature_descriptions['PTRATIO']}",
         min_value=float(ranges['PTRATIO'][0]),
         max_value=float(ranges['PTRATIO'][1]),
-        value=float(current_values.get('PTRATIO', defaults['PTRATIO'])),
+        value=float(st.session_state.get("feature_PTRATIO", defaults['PTRATIO'])),
         step=0.1,
         help="Razão aluno-professor (correlação negativa com preço)",
-        key=f"slider_PTRATIO_page_{scenario_key}"
+        key="feature_PTRATIO"
     )
     
     features['B'] = st.slider(
         f"**B** - {feature_descriptions['B']}",
         min_value=float(ranges['B'][0]),
         max_value=float(ranges['B'][1]),
-        value=float(current_values.get('B', defaults['B'])),
+        value=float(st.session_state.get("feature_B", defaults['B'])),
         step=0.1,
-        key=f"slider_B_page_{scenario_key}"
+        key="feature_B"
     )
     
     features['LSTAT'] = st.slider(
         f"**LSTAT** - {feature_descriptions['LSTAT']}",
         min_value=float(ranges['LSTAT'][0]),
         max_value=float(ranges['LSTAT'][1]),
-        value=float(current_values.get('LSTAT', defaults['LSTAT'])),
+        value=float(st.session_state.get("feature_LSTAT", defaults['LSTAT'])),
         step=0.1,
         help="% de população de baixa renda (correlação negativa mais forte)",
-        key=f"slider_LSTAT_page_{scenario_key}"
+        key="feature_LSTAT"
     )
 
-# Botão de predição (fora do form)
+# Botão de predição
 st.markdown("---")
 submitted = st.button("🔮 Prever Preço", use_container_width=True, type="primary")
-    
+
 if submitted:
     # Converter features para lista na ordem correta
     feature_order = ['CRIM', 'ZN', 'INDUS', 'CHAS', 'NOX', 'RM', 'AGE', 
@@ -346,8 +360,3 @@ if submitted:
         # Comparação visual
         st.progress(min(max(price / 50.0, 0.0), 1.0))
         st.caption("Preço médio do dataset: ~$22.5k | Range típico: $5k - $50k")
-
-# Atualizar session_state com valores dos sliders
-for key, value in features.items():
-    st.session_state.feature_values[key] = value
-

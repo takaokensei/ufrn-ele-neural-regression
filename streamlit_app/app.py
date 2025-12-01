@@ -248,11 +248,6 @@ def _show_prediction_page():
     st.markdown("---")
     st.markdown("### 📝 Características do Imóvel")
     
-    # Usar valores do session_state se um cenário foi selecionado, senão usar defaults
-    # Usar uma key dinâmica baseada no cenário para forçar atualização dos sliders
-    scenario_key = st.session_state.scenario_selected if st.session_state.scenario_selected else "default"
-    current_values = st.session_state.feature_values if st.session_state.scenario_selected else defaults
-    
     col1, col2 = st.columns(2)
     
     features = {}
@@ -260,70 +255,70 @@ def _show_prediction_page():
     with col1:
         st.markdown("#### Características Demográficas e Sociais")
         features['CRIM'] = st.slider(
-                f"**CRIM** - {feature_descriptions['CRIM']}",
-                min_value=float(ranges['CRIM'][0]),
-                max_value=float(ranges['CRIM'][1]),
-                value=float(current_values.get('CRIM', defaults['CRIM'])),
-                step=0.1,
-                help="Taxa de criminalidade per capita",
-                key=f"slider_CRIM_{scenario_key}"
+            f"**CRIM** - {feature_descriptions['CRIM']}",
+            min_value=float(ranges['CRIM'][0]),
+            max_value=float(ranges['CRIM'][1]),
+            value=float(st.session_state.get("feature_CRIM", defaults['CRIM'])),
+            step=0.1,
+            help="Taxa de criminalidade per capita",
+            key="feature_CRIM"
         )
         
         features['ZN'] = st.slider(
             f"**ZN** - {feature_descriptions['ZN']}",
             min_value=float(ranges['ZN'][0]),
             max_value=float(ranges['ZN'][1]),
-            value=float(current_values.get('ZN', defaults['ZN'])),
+            value=float(st.session_state.get("feature_ZN", defaults['ZN'])),
             step=0.1,
-            key=f"slider_ZN_{scenario_key}"
+            key="feature_ZN"
         )
         
         features['INDUS'] = st.slider(
             f"**INDUS** - {feature_descriptions['INDUS']}",
             min_value=float(ranges['INDUS'][0]),
             max_value=float(ranges['INDUS'][1]),
-            value=float(current_values.get('INDUS', defaults['INDUS'])),
+            value=float(st.session_state.get("feature_INDUS", defaults['INDUS'])),
             step=0.1,
-            key=f"slider_INDUS_{scenario_key}"
+            key="feature_INDUS"
         )
         
-        chas_value = current_values.get('CHAS', defaults['CHAS'])
-        chas_index = 1 if chas_value == 1.0 else 0
+        chas_val = st.session_state.get("feature_CHAS", defaults['CHAS'])
+        chas_index = 1 if chas_val == 1.0 else 0
         features['CHAS'] = st.selectbox(
             f"**CHAS** - {feature_descriptions['CHAS']}",
             options=[0.0, 1.0],
             index=chas_index,
             format_func=lambda x: "Sim" if x == 1.0 else "Não",
-            key=f"select_CHAS_{scenario_key}"
+            key="feature_CHAS"
         )
         
         features['NOX'] = st.slider(
             f"**NOX** - {feature_descriptions['NOX']}",
             min_value=float(ranges['NOX'][0]),
             max_value=float(ranges['NOX'][1]),
-            value=float(current_values.get('NOX', defaults['NOX'])),
+            value=float(st.session_state.get("feature_NOX", defaults['NOX'])),
             step=0.001,
             format="%.3f",
-            key=f"slider_NOX_{scenario_key}"
+            key="feature_NOX"
         )
         
         features['RM'] = st.slider(
             f"**RM** - {feature_descriptions['RM']}",
             min_value=float(ranges['RM'][0]),
             max_value=float(ranges['RM'][1]),
-            value=float(current_values.get('RM', defaults['RM'])),
+            value=float(st.session_state.get("feature_RM", defaults['RM'])),
             step=0.1,
             help="Número médio de quartos (correlação positiva forte com preço)",
-            key=f"slider_RM_{scenario_key}"
+            key="feature_RM"
         )
         
         features['AGE'] = st.slider(
             f"**AGE** - {feature_descriptions['AGE']}",
             min_value=float(ranges['AGE'][0]),
             max_value=float(ranges['AGE'][1]),
-            value=float(current_values.get('AGE', defaults['AGE'])),
+            value=float(st.session_state.get("feature_AGE", defaults['AGE'])),
             step=0.1,
-            key=f"slider_AGE_{scenario_key}"
+            key="feature_AGE"
         )
     
     with col2:
@@ -332,56 +327,56 @@ def _show_prediction_page():
             f"**DIS** - {feature_descriptions['DIS']}",
             min_value=float(ranges['DIS'][0]),
             max_value=float(ranges['DIS'][1]),
-            value=float(current_values.get('DIS', defaults['DIS'])),
+            value=float(st.session_state.get("feature_DIS", defaults['DIS'])),
             step=0.1,
-            key=f"slider_DIS_{scenario_key}"
+            key="feature_DIS"
         )
         
         features['RAD'] = st.slider(
             f"**RAD** - {feature_descriptions['RAD']}",
             min_value=float(ranges['RAD'][0]),
             max_value=float(ranges['RAD'][1]),
-            value=float(current_values.get('RAD', defaults['RAD'])),
+            value=float(st.session_state.get("feature_RAD", defaults['RAD'])),
             step=1.0,
-            key=f"slider_RAD_{scenario_key}"
+            key="feature_RAD"
         )
         
         features['TAX'] = st.slider(
             f"**TAX** - {feature_descriptions['TAX']}",
             min_value=float(ranges['TAX'][0]),
             max_value=float(ranges['TAX'][1]),
-            value=float(current_values.get('TAX', defaults['TAX'])),
+            value=float(st.session_state.get("feature_TAX", defaults['TAX'])),
             step=1.0,
-            key=f"slider_TAX_{scenario_key}"
+            key="feature_TAX"
         )
         
         features['PTRATIO'] = st.slider(
             f"**PTRATIO** - {feature_descriptions['PTRATIO']}",
             min_value=float(ranges['PTRATIO'][0]),
             max_value=float(ranges['PTRATIO'][1]),
-            value=float(current_values.get('PTRATIO', defaults['PTRATIO'])),
+            value=float(st.session_state.get("feature_PTRATIO", defaults['PTRATIO'])),
             step=0.1,
             help="Razão aluno-professor (correlação negativa com preço)",
-            key=f"slider_PTRATIO_{scenario_key}"
+            key="feature_PTRATIO"
         )
         
         features['B'] = st.slider(
             f"**B** - {feature_descriptions['B']}",
             min_value=float(ranges['B'][0]),
             max_value=float(ranges['B'][1]),
-            value=float(current_values.get('B', defaults['B'])),
+            value=float(st.session_state.get("feature_B", defaults['B'])),
             step=0.1,
-            key=f"slider_B_{scenario_key}"
+            key="feature_B"
         )
         
         features['LSTAT'] = st.slider(
             f"**LSTAT** - {feature_descriptions['LSTAT']}",
             min_value=float(ranges['LSTAT'][0]),
             max_value=float(ranges['LSTAT'][1]),
-            value=float(current_values.get('LSTAT', defaults['LSTAT'])),
+            value=float(st.session_state.get("feature_LSTAT", defaults['LSTAT'])),
             step=0.1,
             help="% de população de baixa renda (correlação negativa mais forte)",
-            key=f"slider_LSTAT_{scenario_key}"
+            key="feature_LSTAT"
         )
         
     # Botão de predição (fora do form)
@@ -446,14 +441,7 @@ def _show_prediction_page():
             st.progress(min(max(price / 50.0, 0.0), 1.0))
             st.caption("Preço médio do dataset: ~$22.5k | Range típico: $5k - $50k")
     
-    # Atualizar session_state com valores dos sliders (para manter sincronizado)
-    for key, value in features.items():
-        st.session_state.feature_values[key] = value
-    
-    # Limpar flag de cenário após usar os valores
-    if 'scenario_selected' in st.session_state and st.session_state.scenario_selected:
-        # Limpar apenas após renderizar os sliders com os novos valores
-        pass  # Manter flag até próxima renderização
+    # Atualizar session_state com valores dos sliders (já feito automaticamente pelas keys)
 
 def _show_metrics_page():
     """Página de métricas e performance."""
