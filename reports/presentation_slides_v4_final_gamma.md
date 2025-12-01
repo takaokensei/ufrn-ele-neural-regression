@@ -121,7 +121,7 @@
     * Neurônios: 16 a 128
     * Dropout: 0.1 a 0.5
 
-* **Eficiência:** 20 trials concluídos em **25 minutos** (vs. ~5h de Grid Search)
+* **Eficiência:** 20 trials concluídos em **aproximadamente 2 minutos** (vs. ~5h de Grid Search)
 
 **[IMAGEM: `reports/figures/optuna_optimization_history.png` - Histórico de otimização Optuna]**
 
