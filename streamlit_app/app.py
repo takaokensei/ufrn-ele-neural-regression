@@ -196,7 +196,11 @@ def _show_prediction_page():
     # Inicializar valores no session_state se não existirem
     for key in defaults.keys():
         if f"feature_{key}" not in st.session_state:
-            st.session_state[f"feature_{key}"] = defaults[key]
+            # Garantir que CHAS seja float
+            if key == 'CHAS':
+                st.session_state[f"feature_{key}"] = float(defaults[key])
+            else:
+                st.session_state[f"feature_{key}"] = defaults[key]
     
     # Funções de callback para atualizar valores
     def apply_premium():
@@ -288,17 +292,26 @@ def _show_prediction_page():
             key="feature_INDUS"
         )
         
-        chas_val = st.session_state.get("feature_CHAS", defaults['CHAS'])
-        # Garantir que chas_val seja float para comparação
-        chas_val = float(chas_val) if chas_val is not None else 0.0
-        chas_index = int(1 if chas_val == 1.0 else 0)
-        features['CHAS'] = st.selectbox(
+        # Obter valor de CHAS do session_state ou default
+        chas_val = st.session_state.get("feature_CHAS", float(defaults['CHAS']))
+        # Garantir que seja float e válido
+        try:
+            chas_val = float(chas_val)
+        except (TypeError, ValueError):
+            chas_val = 0.0
+        
+        # Determinar índice baseado no valor
+        chas_index = 1 if abs(chas_val - 1.0) < 0.001 else 0
+        
+        # Criar selectbox
+        selected_chas = st.selectbox(
             f"**CHAS** - {feature_descriptions['CHAS']}",
             options=[0.0, 1.0],
             index=chas_index,
             format_func=lambda x: "Sim" if x == 1.0 else "Não",
             key="feature_CHAS"
         )
+        features['CHAS'] = selected_chas
         
         features['NOX'] = st.slider(
             f"**NOX** - {feature_descriptions['NOX']}",
