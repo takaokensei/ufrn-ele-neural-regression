@@ -1305,6 +1305,9 @@ def _show_dashboard_page():
     with chart_placeholder.container():
         render_chart_skeleton()
     
+    # Simular carregamento
+    time.sleep(0.5)
+    
     epochs = np.arange(1, 151)
     
     # Baseline (overfitting)
@@ -1344,6 +1347,8 @@ def _show_dashboard_page():
         legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01)
     )
     
+    # Substituir skeleton pelo gráfico real
+    chart_placeholder.empty()
     st.plotly_chart(fig_curves, use_container_width=True)
     
     # Grid layout para métricas
