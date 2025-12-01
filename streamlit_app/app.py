@@ -188,7 +188,7 @@ def inject_custom_css():
     
     /* ========== SLIDERS CUSTOMIZADOS ========== */
     
-    /* Track do slider (fundo completo) - cinza */
+    /* Track do slider (fundo completo) - cinza para parte não preenchida */
     .stSlider > div > div > div {
         background: rgba(128, 128, 128, 0.3) !important;
         border-radius: 4px !important;
@@ -200,11 +200,10 @@ def inject_custom_css():
         border-radius: 4px !important;
     }
     
-    /* Thumb do slider (bolinha) */
-    .stSlider > div > div > div > div > div {
-        background: #4A90E2 !important;
-        border: 2px solid #FFFFFF !important;
-        box-shadow: 0 2px 8px rgba(74, 144, 226, 0.5) !important;
+    /* Garantir que o fundo do track seja cinza */
+    .stSlider > div > div {
+        background: rgba(128, 128, 128, 0.2) !important;
+        border-radius: 4px !important;
     }
     
     /* Labels dos inputs com melhor legibilidade */
