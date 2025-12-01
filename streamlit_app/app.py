@@ -289,7 +289,9 @@ def _show_prediction_page():
         )
         
         chas_val = st.session_state.get("feature_CHAS", defaults['CHAS'])
-        chas_index = 1 if chas_val == 1.0 else 0
+        # Garantir que chas_val seja float para comparação
+        chas_val = float(chas_val) if chas_val is not None else 0.0
+        chas_index = int(1 if chas_val == 1.0 else 0)
         features['CHAS'] = st.selectbox(
             f"**CHAS** - {feature_descriptions['CHAS']}",
             options=[0.0, 1.0],
