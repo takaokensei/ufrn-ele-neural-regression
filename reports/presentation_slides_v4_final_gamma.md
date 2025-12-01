@@ -95,12 +95,18 @@
 
 **Combatendo o Gap de 181%**
 
-| Técnica | Configuração | Impacto |
+**Abordagem:** Pipeline combinado aplicado simultaneamente
+
+| Técnica | Configuração | Função |
 | :--- | :--- | :--- |
-| **Dropout** | 30% (0.3) | Evita co-adaptação de neurônios |
-| **Weight Decay** | L2 (1e-4) | Penaliza pesos excessivos |
-| **Early Stopping** | Patience=20 | Economiza 70% de tempo de treino |
-| **Checkpointing** | Best Model | Garante o modelo de menor erro, não o último |
+| **Dropout** | 30% (0.3) | Evita co-adaptação de neurônios durante treino |
+| **Weight Decay** | L2 (1e-4) | Penaliza pesos excessivos, promove soluções suaves |
+| **Early Stopping** | Patience=20 | Interrompe treino quando validação não melhora |
+| **Checkpointing** | Best Model | Salva modelo com menor erro de validação |
+
+**Resultado Combinado:** Redução de **~80%** no gap de overfitting (181% → 35%)
+
+> **Nota Metodológica:** As técnicas foram otimizadas em conjunto via Optuna. O impacto individual não foi isolado, pois trabalham sinergicamente.
 
 ---
 
