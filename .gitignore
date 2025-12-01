@@ -13,6 +13,10 @@ models/*.pt
 models/*.h5
 models/*.pkl
 
+# Exceção: Permitir modelo necessário para deploy do Streamlit
+!models/best_model_fold.pth
+!streamlit_app/assets/model/best_model_fold.pth
+
 # Jupyter Notebook
 .ipynb_checkpoints/
 */.ipynb_checkpoints/*
