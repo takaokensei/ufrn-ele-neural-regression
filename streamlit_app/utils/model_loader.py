@@ -70,28 +70,47 @@ def load_model(checkpoint_path: str = None) -> MLP:
     model = MLP(**model_config)
     
     # Carregar pesos se disponíveis
+    model_loaded = False
     if 'model_state_dict' in checkpoint:
-        model.load_state_dict(checkpoint['model_state_dict'])
+        try:
+            model.load_state_dict(checkpoint['model_state_dict'])
+            model_loaded = True
+        except Exception as e:
+            if st:
+                st.warning(f"⚠️ Erro ao carregar model_state_dict: {e}")
+            else:
+                print(f"⚠️ Erro ao carregar model_state_dict: {e}")
     elif 'state_dict' in checkpoint:
-        model.load_state_dict(checkpoint['state_dict'])
+        try:
+            model.load_state_dict(checkpoint['state_dict'])
+            model_loaded = True
+        except Exception as e:
+            if st:
+                st.warning(f"⚠️ Erro ao carregar state_dict: {e}")
+            else:
+                print(f"⚠️ Erro ao carregar state_dict: {e}")
     elif 'model' in checkpoint:
         # Se o modelo completo foi salvo
         model = checkpoint['model']
+        model_loaded = True
     else:
         # Tentar carregar como modelo completo
         try:
             # Se o checkpoint é o modelo completo
             if isinstance(checkpoint, torch.nn.Module):
                 model = checkpoint
+                model_loaded = True
             else:
                 raise KeyError("state_dict não encontrado")
         except:
-            # Se não houver state_dict, o modelo será inicializado aleatoriamente
-            # Isso pode acontecer se o checkpoint só tiver métricas
-            if st:
-                st.warning("⚠️ Aviso: Checkpoint não contém state_dict. Modelo será inicializado aleatoriamente.")
-            else:
-                print("⚠️ Aviso: Checkpoint não contém state_dict. Modelo será inicializado aleatoriamente.")
+            pass
+    
+    # Avisar apenas se realmente não foi possível carregar
+    if not model_loaded:
+        if st:
+            st.warning("⚠️ Aviso: Checkpoint não contém state_dict válido. Modelo será inicializado aleatoriamente.")
+        else:
+            print("⚠️ Aviso: Checkpoint não contém state_dict válido. Modelo será inicializado aleatoriamente.")
     
     # Colocar em modo eval
     model.eval()
