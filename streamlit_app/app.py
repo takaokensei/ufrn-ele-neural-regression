@@ -196,11 +196,12 @@ def _show_prediction_page():
     # Inicializar valores no session_state se não existirem
     for key in defaults.keys():
         if f"feature_{key}" not in st.session_state:
-            # Garantir que CHAS seja float
-            if key == 'CHAS':
-                st.session_state[f"feature_{key}"] = float(defaults[key])
+            # Garantir que todos os valores sejam tipos primitivos Python
+            val = defaults[key]
+            if isinstance(val, (int, float)):
+                st.session_state[f"feature_{key}"] = float(val)
             else:
-                st.session_state[f"feature_{key}"] = defaults[key]
+                st.session_state[f"feature_{key}"] = val
     
     # Funções de callback para atualizar valores
     def apply_premium():
@@ -292,34 +293,37 @@ def _show_prediction_page():
             key="feature_INDUS"
         )
         
-        # Obter valor de CHAS do session_state ou default
-        # Garantir que o valor padrão seja sempre 0.0 (float)
-        default_chas = float(defaults.get('CHAS', 0.0))
-        chas_val = st.session_state.get("feature_CHAS", default_chas)
+        # CHAS: usar selectbox simples sem depender de session_state para o index
+        # O Streamlit gerencia o estado automaticamente pela key
+        if "feature_CHAS" not in st.session_state:
+            # Inicializar com valor padrão
+            default_chas_val = float(defaults.get('CHAS', 0.0))
+            st.session_state["feature_CHAS"] = default_chas_val
         
-        # Garantir que seja float e válido
-        if chas_val is None:
-            chas_val = 0.0
-        else:
-            try:
-                chas_val = float(chas_val)
-            except (TypeError, ValueError):
-                chas_val = 0.0
+        # Obter valor atual do session_state
+        current_chas = st.session_state.get("feature_CHAS", 0.0)
         
-        # Determinar índice baseado no valor (garantir que seja int)
-        chas_index = 1 if abs(chas_val - 1.0) < 0.001 else 0
-        chas_index = int(chas_index)  # Garantir que seja int
+        # Converter para float seguro
+        try:
+            current_chas = float(current_chas) if current_chas is not None else 0.0
+        except (TypeError, ValueError):
+            current_chas = 0.0
         
-        # Criar selectbox com opções explícitas
+        # Determinar índice (0 ou 1)
+        chas_index = 1 if current_chas >= 0.5 else 0
+        
+        # Criar selectbox - Streamlit vai gerenciar o estado pela key
         chas_options = [0.0, 1.0]
         selected_chas = st.selectbox(
             f"**CHAS** - {feature_descriptions['CHAS']}",
             options=chas_options,
             index=chas_index,
-            format_func=lambda x: "Sim" if float(x) == 1.0 else "Não",
-            key="feature_CHAS"
+            format_func=lambda x: "Sim" if x == 1.0 else "Não",
+            key="feature_CHAS_selectbox"
         )
-        # Garantir que o valor selecionado seja float
+        
+        # Atualizar session_state e features
+        st.session_state["feature_CHAS"] = float(selected_chas)
         features['CHAS'] = float(selected_chas)
         
         features['NOX'] = st.slider(
