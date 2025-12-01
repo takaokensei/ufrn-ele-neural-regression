@@ -42,11 +42,23 @@
 * **LSTAT:** % de população de baixa renda
 * **MEDV:** Preço mediano de casas (target)
 
-**Variáveis Determinantes (Correlação de Pearson com MEDV):**
+**Top 5 Correlações Positivas com MEDV:**
 
-* **LSTAT (-0.74):** População de baixa renda (Fator negativo forte)
-* **RM (+0.70):** Número de quartos (Fator positivo forte)
-* **PTRATIO (-0.51):** Razão aluno-professor (Fator negativo moderado)
+1. **RM (+0.70):** Número médio de quartos (Fator positivo mais forte)
+2. **ZN (+0.36):** Proporção de terrenos residenciais zoneados
+3. **B (+0.33):** Proporção de negros por cidade
+4. **DIS (+0.25):** Distância ponderada aos centros de emprego
+5. **CHAS (+0.18):** Limita com rio Charles (binária)
+
+**Top 5 Correlações Negativas com MEDV:**
+
+1. **LSTAT (-0.74):** % de população de baixa renda (Fator negativo mais forte)
+2. **PTRATIO (-0.51):** Razão aluno-professor por cidade
+3. **INDUS (-0.48):** Proporção de acres comerciais não-varejo
+4. **TAX (-0.47):** Taxa de imposto sobre propriedade
+5. **NOX (-0.43):** Concentração de óxidos de nitrogênio
+
+> **Insight:** As correlações mais fortes (RM e LSTAT) explicam a maior parte da variância do preço. Features socioeconômicas (LSTAT, PTRATIO, INDUS) têm impacto negativo consistente.
 
 **Interpretação do Mapa de Correlação:**
 * 🔴 **Vermelho:** Correlação positiva (quanto maior a feature, maior o preço)
