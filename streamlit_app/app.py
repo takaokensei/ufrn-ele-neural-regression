@@ -450,7 +450,7 @@ def show_toast(message: str, icon: str = "✅", duration: int = 3):
     toast_placeholder.markdown(f"""
     <div style="
         position: fixed;
-        top: 20px;
+        top: 80px;
         right: 20px;
         background: rgba(30, 37, 48, 0.95);
         border: 1px solid rgba(74, 144, 226, 0.5);
