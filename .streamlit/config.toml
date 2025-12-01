@@ -1,13 +1,64 @@
 [theme]
+# Base theme
+base = "dark"
+
+# Primary Color (Accent) - Azul Moderno para Data Science
 primaryColor = "#4A90E2"
-backgroundColor = "#1a1a2e"
-secondaryBackgroundColor = "#16213e"
-textColor = "#ffffff"
+
+# Background Principal - Azul Escuro Profissional
+backgroundColor = "#0E1117"
+
+# Background Secundário - Cinza Escuro para Contraste
+secondaryBackgroundColor = "#1E2530"
+
+# Texto Principal - Branco com leve opacidade
+textColor = "#FAFAFA"
+
+# Font Family - Sans Serif Moderna
 font = "sans serif"
 
+# Cor dos códigos
+codeBackgroundColor = "#262730"
+
+# Border visibility
+showSidebarBorder = true
+
+# Cores categóricas para gráficos
+chartCategoricalColors = ["#4A90E2", "#51CF66", "#FFD93D", "#FF6B6B", "#A78BFA", "#F472B6"]
+
+# Cores sequenciais para heatmaps
+chartSequentialColors = ["#0E1117", "#1E2530", "#4A90E2", "#6BA3E8", "#8CB6ED"]
+
 [theme.sidebar]
-backgroundColor = "#16213e"
-textColor = "#ffffff"
+# Sidebar com destaque visual
+backgroundColor = "#1A1D29"
+primaryColor = "#51CF66"
+
+# Palette de cores personalizadas
+[theme.red]
+baseColor = "#FF6B6B"
+backgroundColor = "#4A2626"
+textColor = "#FFE5E5"
+
+[theme.green]
+baseColor = "#51CF66"
+backgroundColor = "#264A2F"
+textColor = "#E5FFE9"
+
+[theme.blue]
+baseColor = "#4A90E2"
+backgroundColor = "#26374A"
+textColor = "#E5F1FF"
+
+[theme.yellow]
+baseColor = "#FFD93D"
+backgroundColor = "#4A442B"
+textColor = "#FFF9E5"
+
+[theme.violet]
+baseColor = "#A78BFA"
+backgroundColor = "#3A2F4A"
+textColor = "#F3EDFF"
 
 [server]
 headless = true
@@ -16,4 +67,3 @@ enableXsrfProtection = true
 
 [browser]
 gatherUsageStats = false
-

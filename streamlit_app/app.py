@@ -6,6 +6,8 @@ UFRN - ELE 604
 
 import streamlit as st
 import sys
+import time
+import contextlib
 from pathlib import Path
 
 # Adicionar utils ao path
@@ -38,6 +40,376 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# ========== FUNÇÕES DE UI/UX ==========
+
+def inject_custom_css():
+    """Injeta CSS customizado para melhorar hierarquia visual e estética."""
+    st.markdown("""
+    <style>
+    /* ========== TIPOGRAFIA E HIERARQUIA ========== */
+    
+    /* Títulos principais com escala visual clara */
+    h1 {
+        font-size: 2.5rem !important;
+        font-weight: 700 !important;
+        margin-bottom: 1.5rem !important;
+        background: linear-gradient(90deg, #4A90E2 0%, #51CF66 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing: -0.02em;
+    }
+    
+    h2 {
+        font-size: 1.8rem !important;
+        font-weight: 600 !important;
+        margin-top: 2rem !important;
+        margin-bottom: 1rem !important;
+        color: #4A90E2 !important;
+        border-left: 4px solid #4A90E2;
+        padding-left: 1rem;
+    }
+    
+    h3 {
+        font-size: 1.4rem !important;
+        font-weight: 500 !important;
+        margin-top: 1.5rem !important;
+        color: #51CF66 !important;
+    }
+    
+    /* ========== ESPAÇAMENTO E LAYOUT ========== */
+    
+    /* Padding consistente nos containers */
+    .main .block-container {
+        padding-top: 2rem !important;
+        padding-bottom: 3rem !important;
+        padding-left: 3rem !important;
+        padding-right: 3rem !important;
+        max-width: 1400px !important;
+    }
+    
+    /* ========== CARDS E CONTAINERS ========== */
+    
+    /* Cards com glassmorphism para métricas */
+    div[data-testid="metric-container"] {
+        background: rgba(30, 37, 48, 0.6) !important;
+        border: 1px solid rgba(74, 144, 226, 0.3) !important;
+        border-radius: 12px !important;
+        padding: 1.5rem !important;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37) !important;
+        backdrop-filter: blur(8px) !important;
+        -webkit-backdrop-filter: blur(8px) !important;
+        transition: all 0.3s ease !important;
+    }
+    
+    div[data-testid="metric-container"]:hover {
+        transform: translateY(-4px) !important;
+        box-shadow: 0 12px 40px 0 rgba(74, 144, 226, 0.3) !important;
+        border-color: rgba(74, 144, 226, 0.6) !important;
+    }
+    
+    /* Expanders com estilo moderno */
+    div[data-testid="stExpander"] {
+        background: rgba(30, 37, 48, 0.4) !important;
+        border: 1px solid rgba(74, 144, 226, 0.2) !important;
+        border-radius: 8px !important;
+        margin: 1rem 0 !important;
+    }
+    
+    /* ========== BOTÕES E INTERAÇÕES ========== */
+    
+    /* Botões primários com hover effect */
+    .stButton > button[kind="primary"] {
+        background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%) !important;
+        border: none !important;
+        border-radius: 8px !important;
+        padding: 0.75rem 2rem !important;
+        font-weight: 600 !important;
+        font-size: 1rem !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3) !important;
+    }
+    
+    .stButton > button[kind="primary"]:hover {
+        background: linear-gradient(135deg, #357ABD 0%, #2868A6 100%) !important;
+        box-shadow: 0 6px 20px rgba(74, 144, 226, 0.5) !important;
+        transform: translateY(-2px) !important;
+    }
+    
+    /* Botões secundários */
+    .stButton > button {
+        border-radius: 8px !important;
+        padding: 0.6rem 1.5rem !important;
+        font-weight: 500 !important;
+        transition: all 0.2s ease !important;
+        border: 1px solid rgba(74, 144, 226, 0.3) !important;
+    }
+    
+    .stButton > button:hover {
+        border-color: rgba(74, 144, 226, 0.6) !important;
+        background: rgba(74, 144, 226, 0.1) !important;
+    }
+    
+    /* ========== SIDEBAR APRIMORADA ========== */
+    
+    /* Sidebar com gradiente sutil */
+    section[data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #1A1D29 0%, #0E1117 100%) !important;
+        border-right: 1px solid rgba(74, 144, 226, 0.2) !important;
+    }
+    
+    /* Radio buttons horizontais com espaçamento */
+    div[role="radiogroup"] {
+        gap: 0.5rem !important;
+    }
+    
+    div[role="radiogroup"] label {
+        background: rgba(30, 37, 48, 0.5) !important;
+        border: 1px solid rgba(74, 144, 226, 0.2) !important;
+        border-radius: 8px !important;
+        padding: 0.8rem 1rem !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    
+    div[role="radiogroup"] label:hover {
+        background: rgba(74, 144, 226, 0.15) !important;
+        border-color: rgba(74, 144, 226, 0.5) !important;
+    }
+    
+    /* Destaque da página ativa */
+    div[role="radiogroup"] label[data-checked="true"] {
+        background: rgba(74, 144, 226, 0.25) !important;
+        border-color: #4A90E2 !important;
+        box-shadow: 0 0 15px rgba(74, 144, 226, 0.3) !important;
+        font-weight: 600 !important;
+    }
+    
+    /* ========== INPUTS E SLIDERS ========== */
+    
+    /* Sliders com cor primária */
+    .stSlider > div > div > div > div {
+        background: #4A90E2 !important;
+    }
+    
+    /* Labels dos inputs com melhor legibilidade */
+    .stSlider label, .stSelectbox label {
+        font-weight: 500 !important;
+        color: #FAFAFA !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    /* ========== TABELAS E DATAFRAMES ========== */
+    
+    /* Dataframes com estilo moderno */
+    div[data-testid="stDataFrame"] {
+        border-radius: 8px !important;
+        overflow: hidden !important;
+        border: 1px solid rgba(74, 144, 226, 0.2) !important;
+    }
+    
+    /* ========== ALERTAS E NOTIFICAÇÕES ========== */
+    
+    /* Success messages */
+    div[data-testid="stAlert"][data-baseweb="notification"] {
+        border-radius: 8px !important;
+        border-left: 4px solid #51CF66 !important;
+        background: rgba(81, 207, 102, 0.1) !important;
+    }
+    
+    /* Info messages */
+    .stInfo {
+        background: rgba(74, 144, 226, 0.1) !important;
+        border-left: 4px solid #4A90E2 !important;
+        border-radius: 8px !important;
+    }
+    
+    /* Warning messages */
+    .stWarning {
+        background: rgba(255, 217, 61, 0.1) !important;
+        border-left: 4px solid #FFD93D !important;
+        border-radius: 8px !important;
+    }
+    
+    /* ========== GRÁFICOS PLOTLY ========== */
+    
+    /* Container dos gráficos com sombra */
+    .js-plotly-plot {
+        border-radius: 12px !important;
+        overflow: hidden !important;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+    }
+    
+    /* ========== SCROLLBAR CUSTOMIZADA ========== */
+    
+    ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background: #1E2530;
+        border-radius: 5px;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: #4A90E2;
+        border-radius: 5px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        background: #357ABD;
+    }
+    
+    /* ========== ANIMAÇÕES SUAVES ========== */
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .main .block-container > div {
+        animation: fadeIn 0.5s ease-out;
+    }
+    
+    /* ========== RESPONSIVIDADE ========== */
+    
+    @media (max-width: 768px) {
+        .main .block-container {
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+        }
+        
+        h1 {
+            font-size: 2rem !important;
+        }
+        
+        h2 {
+            font-size: 1.5rem !important;
+        }
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+
+def render_breadcrumb(current_page: str):
+    """Renderiza breadcrumb de navegação."""
+    pages_map = {
+        "🏠 Predição Interativa": "Início > Predição",
+        "📊 Métricas e Performance": "Início > Métricas",
+        "🔍 Análise de Features": "Início > Análise",
+        "📈 Dashboard Visual": "Início > Dashboard"
+    }
+    
+    breadcrumb = pages_map.get(current_page, "Início")
+    
+    st.markdown(f"""
+    <div style="
+        background: rgba(30, 37, 48, 0.4);
+        padding: 0.8rem 1.5rem;
+        border-radius: 8px;
+        border-left: 3px solid #4A90E2;
+        margin-bottom: 1.5rem;
+        font-size: 0.9rem;
+        color: #A0A0A0;
+    ">
+        📍 {breadcrumb}
+    </div>
+    """, unsafe_allow_html=True)
+
+
+@contextlib.contextmanager
+def loading_state(message: str = "Carregando..."):
+    """Context manager para estados de loading com spinner customizado."""
+    placeholder = st.empty()
+    
+    with placeholder.container():
+        st.markdown(f"""
+        <div style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            background: rgba(30, 37, 48, 0.4);
+            border-radius: 12px;
+            border: 1px solid rgba(74, 144, 226, 0.3);
+        ">
+            <div class="loader"></div>
+            <p style="margin-top: 1.5rem; color: #4A90E2; font-weight: 500;">
+                {message}
+            </p>
+        </div>
+        
+        <style>
+        .loader {{
+            border: 4px solid rgba(74, 144, 226, 0.2);
+            border-top: 4px solid #4A90E2;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }}
+        
+        @keyframes spin {{
+            0% {{ transform: rotate(0deg); }}
+            100% {{ transform: rotate(360deg); }}
+        }}
+        </style>
+        """, unsafe_allow_html=True)
+    
+    try:
+        yield
+    finally:
+        placeholder.empty()
+
+
+def show_toast(message: str, icon: str = "✅", duration: int = 3):
+    """Exibe toast notification customizada."""
+    toast_placeholder = st.empty()
+    
+    toast_placeholder.markdown(f"""
+    <div style="
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: rgba(30, 37, 48, 0.95);
+        border: 1px solid rgba(74, 144, 226, 0.5);
+        border-radius: 8px;
+        padding: 1rem 1.5rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        animation: slideIn 0.3s ease-out;
+        backdrop-filter: blur(10px);
+    ">
+        <div style="display: flex; align-items: center; gap: 0.8rem;">
+            <span style="font-size: 1.5rem;">{icon}</span>
+            <span style="color: #FAFAFA; font-weight: 500;">{message}</span>
+        </div>
+    </div>
+    
+    <style>
+    @keyframes slideIn {{
+        from {{
+            transform: translateX(400px);
+            opacity: 0;
+        }}
+        to {{
+            transform: translateX(0);
+            opacity: 1;
+        }}
+    }}
+    </style>
+    """, unsafe_allow_html=True)
+    
+    time.sleep(duration)
+    toast_placeholder.empty()
+
 # Inicializar session state
 if 'model_loaded' not in st.session_state:
     st.session_state.model_loaded = False
@@ -48,6 +420,9 @@ if 'model_info' not in st.session_state:
 
 def main():
     """Aplicação principal do Streamlit."""
+    
+    # Injetar CSS customizado
+    inject_custom_css()
     
     # Título principal
     st.title("🏠 Análise de Generalização em Redes Neurais")
@@ -86,8 +461,24 @@ def main():
                 "🔍 Análise de Features",
                 "📈 Dashboard Visual"
             ],
-            index=0
+            index=0,
+            key="navigation_radio"
         )
+        
+        # Adicionar atalhos de teclado (legenda)
+        st.markdown("""
+        <div style="
+            background: rgba(30, 37, 48, 0.5);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+            font-size: 0.85rem;
+            border: 1px solid rgba(74, 144, 226, 0.2);
+        ">
+            ⌨️ <strong>Atalhos:</strong><br>
+            <code>Alt + 1-4</code>: Navegar páginas
+        </div>
+        """, unsafe_allow_html=True)
         
         st.markdown("---")
         
@@ -103,7 +494,7 @@ def main():
     
     # Carregar modelo (lazy)
     if not st.session_state.model_loaded:
-        with st.spinner("🔄 Carregando modelo..."):
+        with loading_state("🔄 Carregando modelo..."):
             try:
                 imports = _lazy_imports()
                 model = imports['load_model']()
@@ -128,7 +519,7 @@ def main():
                     para gerar um checkpoint com `model_state_dict` salvo. O notebook já foi ajustado para salvar o state_dict.
                     """)
                 else:
-                    st.success("✅ Modelo carregado com sucesso!")
+                    show_toast("Modelo carregado com sucesso!", "✅", 2)
             except Exception as e:
                 st.error(f"❌ Erro ao carregar modelo: {e}")
                 st.info("💡 Certifique-se de que o modelo foi treinado e salvo em `models/best_model_fold.pth`")
@@ -147,10 +538,30 @@ def main():
 def _show_prediction_page():
     """Página de predição interativa."""
     import torch
-    import time
     
-    st.header("🏠 Predição de Preço de Imóveis")
-    st.markdown("Insira as características do imóvel para obter uma predição de preço em tempo real")
+    # Breadcrumb
+    render_breadcrumb("🏠 Predição Interativa")
+    
+    # Hero section
+    st.markdown("""
+    <div style="
+        background: linear-gradient(135deg, rgba(74, 144, 226, 0.2), rgba(81, 207, 102, 0.2));
+        padding: 2.5rem;
+        border-radius: 16px;
+        border: 1px solid rgba(74, 144, 226, 0.3);
+        margin-bottom: 2rem;
+        text-align: center;
+    ">
+        <h1 style="margin: 0; font-size: 2.2rem;">🏠 Preditor de Preços</h1>
+        <p style="
+            margin: 1rem 0 0 0;
+            font-size: 1.1rem;
+            color: #A0A0A0;
+        ">
+            Configure as características do imóvel e obtenha uma estimativa de preço em tempo real
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
     
     # Obter imports
     imports = _lazy_imports()
@@ -430,7 +841,7 @@ def _show_prediction_page():
             st.error(f"❌ {error_msg}")
         else:
             # Pré-processar input
-            with st.spinner("🔄 Processando..."):
+            with loading_state("🔄 Processando predição..."):
                 start_time = time.time()
                 features_tensor = imports['preprocess_input'](features_list)
                 
@@ -441,6 +852,9 @@ def _show_prediction_page():
                     price = prediction.item()  # Já está em milhares de dólares (k$)
                 
                 elapsed_time = (time.time() - start_time) * 1000  # em ms
+            
+            # Toast de sucesso
+            show_toast("Predição realizada com sucesso!", "🎉", 2)
             
             # Exibir resultado
             st.markdown("---")
@@ -481,6 +895,9 @@ def _show_metrics_page():
     """Página de métricas e performance."""
     import plotly.graph_objects as go
     import pandas as pd
+    
+    # Breadcrumb
+    render_breadcrumb("📊 Métricas e Performance")
     
     st.header("📊 Métricas e Performance")
     st.markdown("Visualize as métricas de performance do modelo treinado")
@@ -639,6 +1056,9 @@ def _show_features_page():
     import numpy as np
     import pandas as pd
     
+    # Breadcrumb
+    render_breadcrumb("🔍 Análise de Features")
+    
     st.header("🔍 Análise de Features")
     st.markdown("Explore a importância e correlação das features com o preço (MEDV)")
     
@@ -761,6 +1181,9 @@ def _show_dashboard_page():
     import plotly.graph_objects as go
     import numpy as np
     from sklearn.metrics import r2_score
+    
+    # Breadcrumb
+    render_breadcrumb("📈 Dashboard Visual")
     
     st.header("📈 Dashboard Visual")
     st.markdown("Visualizações avançadas de learning curves e resultados do modelo")
