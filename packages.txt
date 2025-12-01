@@ -1,4 +1,0 @@
-# Arquivo necessário para deploy no Streamlit Cloud
-# Lista de pacotes do sistema que podem ser necessários
-# Deixe vazio se não precisar de pacotes do sistema
-
