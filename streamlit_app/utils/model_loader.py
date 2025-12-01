@@ -23,15 +23,36 @@ def load_model(checkpoint_path: str = None) -> MLP:
     Carrega o modelo treinado do checkpoint.
     
     Args:
-        checkpoint_path: Caminho para o arquivo .pth. Se None, usa o caminho padrão.
+        checkpoint_path: Caminho para o arquivo .pth. Se None, tenta múltiplos locais.
         
     Returns:
         Modelo MLP carregado e em modo eval
     """
     if checkpoint_path is None:
-        # Caminho padrão relativo à raiz do projeto
-        base_path = Path(__file__).parent.parent.parent
-        checkpoint_path = base_path / "models" / "best_model_fold.pth"
+        # Tentar múltiplos caminhos (para deploy no Streamlit Cloud e local)
+        possible_paths = [
+            # Caminho relativo à raiz do projeto (local)
+            Path(__file__).parent.parent.parent / "models" / "best_model_fold.pth",
+            # Caminho dentro de streamlit_app (alternativo local)
+            Path(__file__).parent.parent / "assets" / "model" / "best_model_fold.pth",
+            # Caminho absoluto do Streamlit Cloud
+            Path("/mount/src/ufrn-ele-neural-regression/models/best_model_fold.pth"),
+            # Caminho alternativo do Streamlit Cloud
+            Path("/mount/src/ufrn-ele-neural-regression/streamlit_app/assets/model/best_model_fold.pth"),
+        ]
+        
+        checkpoint_path = None
+        for path in possible_paths:
+            if os.path.exists(path):
+                checkpoint_path = path
+                break
+        
+        if checkpoint_path is None:
+            raise FileNotFoundError(
+                f"Checkpoint não encontrado em nenhum dos locais esperados:\n"
+                + "\n".join([f"  - {p}" for p in possible_paths]) +
+                "\n\nCertifique-se de que o modelo foi treinado e salvo."
+            )
     
     # Verificar se o arquivo existe
     if not os.path.exists(checkpoint_path):
@@ -123,14 +144,28 @@ def get_model_info(checkpoint_path: str = None) -> dict:
     Retorna informações sobre o modelo carregado.
     
     Args:
-        checkpoint_path: Caminho para o arquivo .pth
+        checkpoint_path: Caminho para o arquivo .pth. Se None, tenta múltiplos locais.
         
     Returns:
         Dicionário com informações do modelo
     """
     if checkpoint_path is None:
-        base_path = Path(__file__).parent.parent.parent
-        checkpoint_path = base_path / "models" / "best_model_fold.pth"
+        # Tentar múltiplos caminhos (mesma lógica do load_model)
+        possible_paths = [
+            Path(__file__).parent.parent.parent / "models" / "best_model_fold.pth",
+            Path(__file__).parent.parent / "assets" / "model" / "best_model_fold.pth",
+            Path("/mount/src/ufrn-ele-neural-regression/models/best_model_fold.pth"),
+            Path("/mount/src/ufrn-ele-neural-regression/streamlit_app/assets/model/best_model_fold.pth"),
+        ]
+        
+        checkpoint_path = None
+        for path in possible_paths:
+            if os.path.exists(path):
+                checkpoint_path = path
+                break
+        
+        if checkpoint_path is None:
+            raise FileNotFoundError("Checkpoint não encontrado para obter informações do modelo.")
     
     checkpoint = torch.load(checkpoint_path, map_location='cpu')
     

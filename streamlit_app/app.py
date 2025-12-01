@@ -188,22 +188,33 @@ def inject_custom_css():
     
     /* ========== SLIDERS CUSTOMIZADOS ========== */
     
-    /* Track do slider (fundo completo) - cinza para parte não preenchida */
+    /* Track do slider - fundo cinza (parte não preenchida) */
+    .stSlider > div > div {
+        background: rgba(128, 128, 128, 0.3) !important;
+        border-radius: 4px !important;
+        position: relative !important;
+    }
+    
+    /* Container interno do slider */
     .stSlider > div > div > div {
         background: rgba(128, 128, 128, 0.3) !important;
         border-radius: 4px !important;
+        position: relative !important;
     }
     
-    /* Barra do slider - parte preenchida (azul) - apenas até o valor atual */
+    /* Barra preenchida (azul) - apenas até o valor atual */
     .stSlider > div > div > div > div {
         background: #4A90E2 !important;
         border-radius: 4px !important;
+        height: 100% !important;
+        /* A largura é controlada dinamicamente pelo Streamlit baseado no valor */
     }
     
-    /* Garantir que o fundo do track seja cinza */
-    .stSlider > div > div {
-        background: rgba(128, 128, 128, 0.2) !important;
-        border-radius: 4px !important;
+    /* Thumb do slider (bolinha) */
+    .stSlider > div > div > div > div > div {
+        background: #4A90E2 !important;
+        border: 2px solid #FFFFFF !important;
+        box-shadow: 0 2px 8px rgba(74, 144, 226, 0.5) !important;
     }
     
     /* Labels dos inputs com melhor legibilidade */
@@ -606,7 +617,22 @@ def main():
                     para gerar um checkpoint com `model_state_dict` salvo. O notebook já foi ajustado para salvar o state_dict.
                     """)
                 else:
-                    show_toast("Modelo carregado com sucesso!", "✅", 2)
+                    # Card de sucesso com posicionamento ajustado (3cm abaixo)
+                    st.markdown("""
+                    <div style="
+                        margin-top: 3rem;
+                        padding: 1rem 1.5rem;
+                        background: rgba(81, 207, 102, 0.15);
+                        border: 1px solid rgba(81, 207, 102, 0.5);
+                        border-radius: 8px;
+                        border-left: 4px solid #51CF66;
+                    ">
+                        <div style="display: flex; align-items: center; gap: 0.8rem;">
+                            <span style="font-size: 1.5rem;">✅</span>
+                            <span style="color: #51CF66; font-weight: 600; font-size: 1rem;">Modelo carregado com sucesso!</span>
+                        </div>
+                    </div>
+                    """, unsafe_allow_html=True)
             except Exception as e:
                 st.error(f"❌ Erro ao carregar modelo: {e}")
                 st.info("💡 Certifique-se de que o modelo foi treinado e salvo em `models/best_model_fold.pth`")
