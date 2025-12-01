@@ -188,33 +188,41 @@ def inject_custom_css():
     
     /* ========== SLIDERS CUSTOMIZADOS ========== */
     
-    /* Track do slider - fundo cinza (parte não preenchida) */
+    /* Track do slider - fundo cinza para parte não preenchida */
     .stSlider > div > div {
-        background: rgba(128, 128, 128, 0.3) !important;
+        background: rgba(128, 128, 128, 0.25) !important;
         border-radius: 4px !important;
-        position: relative !important;
     }
     
-    /* Container interno do slider */
+    /* Container do track - manter cinza */
     .stSlider > div > div > div {
-        background: rgba(128, 128, 128, 0.3) !important;
+        background: rgba(128, 128, 128, 0.25) !important;
         border-radius: 4px !important;
-        position: relative !important;
     }
     
-    /* Barra preenchida (azul) - apenas até o valor atual */
+    /* Barra preenchida (azul) - Streamlit controla a largura dinamicamente */
     .stSlider > div > div > div > div {
         background: #4A90E2 !important;
         border-radius: 4px !important;
-        height: 100% !important;
-        /* A largura é controlada dinamicamente pelo Streamlit baseado no valor */
     }
     
-    /* Thumb do slider (bolinha) */
-    .stSlider > div > div > div > div > div {
-        background: #4A90E2 !important;
-        border: 2px solid #FFFFFF !important;
-        box-shadow: 0 2px 8px rgba(74, 144, 226, 0.5) !important;
+    /* Garantir que o fundo do track permaneça visível (cinza) */
+    .stSlider > div > div > div::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        background: rgba(128, 128, 128, 0.25) !important;
+        border-radius: 4px !important;
+        z-index: 0;
+    }
+    
+    /* Barra preenchida acima do fundo */
+    .stSlider > div > div > div > div {
+        position: relative !important;
+        z-index: 1 !important;
     }
     
     /* Labels dos inputs com melhor legibilidade */
