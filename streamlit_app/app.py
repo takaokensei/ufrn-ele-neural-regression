@@ -410,6 +410,96 @@ def show_toast(message: str, icon: str = "✅", duration: int = 3):
     time.sleep(duration)
     toast_placeholder.empty()
 
+
+def render_chart_skeleton():
+    """Renderiza skeleton de gráfico enquanto carrega."""
+    st.markdown("""
+    <div style="
+        width: 100%;
+        height: 400px;
+        background: linear-gradient(90deg, 
+            rgba(30, 37, 48, 0.4) 25%, 
+            rgba(74, 144, 226, 0.1) 50%, 
+            rgba(30, 37, 48, 0.4) 75%
+        );
+        background-size: 200% 100%;
+        animation: shimmer 1.5s infinite;
+        border-radius: 12px;
+        border: 1px solid rgba(74, 144, 226, 0.2);
+    "></div>
+    
+    <style>
+    @keyframes shimmer {
+        0% { background-position: -200% 0; }
+        100% { background-position: 200% 0; }
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+
+def inject_keyboard_shortcuts():
+    """Injeta JavaScript para atalhos de teclado."""
+    st.markdown("""
+    <script>
+    document.addEventListener('keydown', function(e) {
+        // Alt + 1,2,3,4 para navegação rápida
+        if (e.altKey && !e.ctrlKey && !e.shiftKey) {
+            const pageIndex = parseInt(e.key) - 1;
+            if (pageIndex >= 0 && pageIndex <= 3) {
+                const radioButtons = document.querySelectorAll('input[type="radio"][name*="navigation"]');
+                if (radioButtons[pageIndex]) {
+                    radioButtons[pageIndex].click();
+                    // Trigger change event
+                    const event = new Event('change', { bubbles: true });
+                    radioButtons[pageIndex].dispatchEvent(event);
+                }
+            }
+        }
+    });
+    </script>
+    """, unsafe_allow_html=True)
+
+
+def inject_high_contrast_mode():
+    """Injeta CSS para modo de alto contraste."""
+    st.markdown("""
+    <style>
+    :root {
+        --primary-color: #FFFFFF !important;
+        --background-color: #000000 !important;
+        --secondary-background-color: #1A1A1A !important;
+        --text-color: #FFFFFF !important;
+    }
+    
+    .main {
+        background-color: #000000 !important;
+    }
+    
+    section[data-testid="stSidebar"] {
+        background: #1A1A1A !important;
+    }
+    
+    h1, h2, h3, p, span, div {
+        color: #FFFFFF !important;
+        text-shadow: 1px 1px 2px #000000;
+    }
+    
+    div[data-testid="metric-container"] {
+        border: 2px solid #FFFFFF !important;
+        background: #1A1A1A !important;
+    }
+    
+    .stButton > button {
+        border: 2px solid #FFFFFF !important;
+        color: #FFFFFF !important;
+    }
+    
+    .stSlider > div > div > div > div {
+        background: #FFFFFF !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
 # Inicializar session state
 if 'model_loaded' not in st.session_state:
     st.session_state.model_loaded = False
@@ -465,6 +555,12 @@ def main():
             key="navigation_radio"
         )
         
+        # Modo de alto contraste
+        st.markdown("---")
+        high_contrast = st.toggle("🔆 Modo Alto Contraste", value=False, key="high_contrast_toggle")
+        if high_contrast:
+            inject_high_contrast_mode()
+        
         # Adicionar atalhos de teclado (legenda)
         st.markdown("""
         <div style="
@@ -479,6 +575,9 @@ def main():
             <code>Alt + 1-4</code>: Navegar páginas
         </div>
         """, unsafe_allow_html=True)
+        
+        # Injetar JavaScript para atalhos
+        inject_keyboard_shortcuts()
         
         st.markdown("---")
         
@@ -1197,9 +1296,14 @@ def _show_dashboard_page():
         help="Escolha qual fold do K-Fold Cross-Validation visualizar"
     )
     
-    # Learning Curves
+    # Learning Curves com skeleton screen
     st.markdown("---")
     st.markdown("### 📉 Learning Curves")
+    
+    # Mostrar skeleton enquanto carrega
+    chart_placeholder = st.empty()
+    with chart_placeholder.container():
+        render_chart_skeleton()
     
     epochs = np.arange(1, 151)
     
@@ -1242,15 +1346,48 @@ def _show_dashboard_page():
     
     st.plotly_chart(fig_curves, use_container_width=True)
     
+    # Grid layout para métricas
+    st.markdown("""
+    <div class="dashboard-grid">
+    </div>
+    <style>
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin: 2rem 0;
+    }
+    .grid-item {
+        background: rgba(30, 37, 48, 0.5);
+        border: 1px solid rgba(74, 144, 226, 0.2);
+        border-radius: 12px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+    }
+    .grid-item:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 25px rgba(74, 144, 226, 0.2);
+        border-color: rgba(74, 144, 226, 0.5);
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
     col1, col2 = st.columns(2)
     with col1:
         st.metric("Gap Baseline", "181%", "Overfitting severo")
     with col2:
         st.metric("Gap Otimizado", "35%", "Redução de 80%")
     
-    # Scatter Plot
+    # Scatter Plot com skeleton
     st.markdown("---")
     st.markdown("### 🎯 Predições vs Valores Reais")
+    
+    scatter_placeholder = st.empty()
+    with scatter_placeholder.container():
+        render_chart_skeleton()
+    
+    # Simular carregamento
+    time.sleep(0.5)
     
     np.random.seed(42)
     n_samples = 101
@@ -1281,7 +1418,8 @@ def _show_dashboard_page():
         showlegend=True
     )
     
-    st.plotly_chart(fig_scatter, use_container_width=True)
+    # Substituir skeleton pelo gráfico real
+    scatter_placeholder.plotly_chart(fig_scatter, use_container_width=True)
     
     col1, col2, col3 = st.columns(3)
     mse_scatter = np.mean((y_true - y_pred) ** 2)
@@ -1294,9 +1432,16 @@ def _show_dashboard_page():
     with col3:
         st.metric("MAE", f"${mae_scatter:.2f}k")
     
-    # Histórico de Otimização Optuna
+    # Histórico de Otimização Optuna com skeleton
     st.markdown("---")
     st.markdown("### 🔬 Histórico de Otimização Optuna")
+    
+    optuna_placeholder = st.empty()
+    with optuna_placeholder.container():
+        render_chart_skeleton()
+    
+    # Simular carregamento
+    time.sleep(0.5)
     
     n_trials = 20
     trial_numbers = np.arange(1, n_trials + 1)
@@ -1327,11 +1472,19 @@ def _show_dashboard_page():
         template="plotly_dark"
     )
     
-    st.plotly_chart(fig_optuna, use_container_width=True)
+    # Substituir skeleton pelo gráfico real
+    optuna_placeholder.plotly_chart(fig_optuna, use_container_width=True)
     
-    # Importância de Hiperparâmetros
+    # Importância de Hiperparâmetros com skeleton
     st.markdown("---")
     st.markdown("### ⚙️ Importância dos Hiperparâmetros")
+    
+    importance_placeholder = st.empty()
+    with importance_placeholder.container():
+        render_chart_skeleton()
+    
+    # Simular carregamento
+    time.sleep(0.5)
     
     hyperparams = ['learning_rate', 'weight_decay', 'dropout_rate', 'hidden_units', 'n_layers', 'optimizer']
     importance = [0.28, 0.15, 0.12, 0.25, 0.10, 0.10]
@@ -1348,7 +1501,8 @@ def _show_dashboard_page():
         template="plotly_dark"
     )
     
-    st.plotly_chart(fig_importance, use_container_width=True)
+    # Substituir skeleton pelo gráfico real
+    importance_placeholder.plotly_chart(fig_importance, use_container_width=True)
 
 if __name__ == "__main__":
     main()
