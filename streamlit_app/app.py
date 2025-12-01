@@ -1048,7 +1048,17 @@ def _show_prediction_page():
             
             # Comparação visual
             st.progress(min(max(price / 50.0, 0.0), 1.0))
-            st.caption("Preço médio do dataset: ~$22.5k | Range típico: $5k - $50k")
+            st.markdown("""
+            <div style="
+                margin-top: 0.5rem;
+                color: rgba(255, 255, 255, 0.7);
+                font-size: 0.85rem;
+                text-align: center;
+                white-space: nowrap;
+            ">
+                Preço médio do dataset: <strong>~$22.5k</strong> | Range típico: <strong>$5k - $50k</strong>
+            </div>
+            """, unsafe_allow_html=True)
     
     # Atualizar session_state com valores dos sliders (já feito automaticamente pelas keys)
 
