@@ -186,43 +186,64 @@ def inject_custom_css():
     
     /* ========== INPUTS E SLIDERS ========== */
     
-    /* ========== SLIDERS CUSTOMIZADOS ========== */
+    /* ========== SLIDERS APRIMORADOS ========== */
     
-    /* Track do slider - fundo cinza para parte não preenchida */
-    .stSlider > div > div {
-        background: rgba(128, 128, 128, 0.25) !important;
-        border-radius: 4px !important;
+    /* Container do slider */
+    div[data-testid="stSlider"] {
+        padding: 1rem 0.5rem;
     }
     
-    /* Container do track - manter cinza */
-    .stSlider > div > div > div {
-        background: rgba(128, 128, 128, 0.25) !important;
-        border-radius: 4px !important;
+    /* Label do slider - melhor legibilidade */
+    div[data-testid="stSlider"] label {
+        font-weight: 600 !important;
+        font-size: 0.95rem !important;
+        color: #FAFAFA !important;
+        margin-bottom: 0.8rem !important;
+        display: block !important;
     }
     
-    /* Barra preenchida (azul) - Streamlit controla a largura dinamicamente */
-    .stSlider > div > div > div > div {
+    /* Track do slider (fundo cinza) */
+    div[data-testid="stSlider"] > div > div > div > div {
+        background: rgba(74, 144, 226, 0.3) !important;
+        height: 6px !important;
+        border-radius: 3px !important;
+    }
+    
+    /* Barra de progresso (parte preenchida) */
+    div[data-testid="stSlider"] > div > div > div > div > div {
+        background: linear-gradient(90deg, #4A90E2 0%, #51CF66 100%) !important;
+        height: 6px !important;
+        border-radius: 3px !important;
+        box-shadow: 0 0 10px rgba(74, 144, 226, 0.4) !important;
+    }
+    
+    /* Thumb (bolinha) do slider */
+    div[data-testid="stSlider"] > div > div > div > div > div > div {
         background: #4A90E2 !important;
-        border-radius: 4px !important;
+        border: 3px solid #FFFFFF !important;
+        width: 20px !important;
+        height: 20px !important;
+        box-shadow: 0 2px 8px rgba(74, 144, 226, 0.6) !important;
+        transition: all 0.2s ease !important;
     }
     
-    /* Garantir que o fundo do track permaneça visível (cinza) */
-    .stSlider > div > div > div::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 0;
-        bottom: 0;
-        background: rgba(128, 128, 128, 0.25) !important;
-        border-radius: 4px !important;
-        z-index: 0;
+    /* Hover no thumb */
+    div[data-testid="stSlider"] > div > div > div > div > div > div:hover {
+        transform: scale(1.2) !important;
+        box-shadow: 0 4px 12px rgba(74, 144, 226, 0.8) !important;
     }
     
-    /* Barra preenchida acima do fundo */
-    .stSlider > div > div > div > div {
-        position: relative !important;
-        z-index: 1 !important;
+    /* Valor do slider (número) */
+    div[data-testid="stSlider"] > div > div > div:last-child {
+        color: #4A90E2 !important;
+        font-weight: 600 !important;
+        font-size: 0.9rem !important;
+        margin-top: 0.3rem !important;
+    }
+    
+    /* Espaçamento entre sliders */
+    div[data-testid="stSlider"] + div[data-testid="stSlider"] {
+        margin-top: 1.5rem !important;
     }
     
     /* Labels dos inputs com melhor legibilidade */
