@@ -293,25 +293,34 @@ def _show_prediction_page():
         )
         
         # Obter valor de CHAS do session_state ou default
-        chas_val = st.session_state.get("feature_CHAS", float(defaults['CHAS']))
+        # Garantir que o valor padrão seja sempre 0.0 (float)
+        default_chas = float(defaults.get('CHAS', 0.0))
+        chas_val = st.session_state.get("feature_CHAS", default_chas)
+        
         # Garantir que seja float e válido
-        try:
-            chas_val = float(chas_val)
-        except (TypeError, ValueError):
+        if chas_val is None:
             chas_val = 0.0
+        else:
+            try:
+                chas_val = float(chas_val)
+            except (TypeError, ValueError):
+                chas_val = 0.0
         
-        # Determinar índice baseado no valor
+        # Determinar índice baseado no valor (garantir que seja int)
         chas_index = 1 if abs(chas_val - 1.0) < 0.001 else 0
+        chas_index = int(chas_index)  # Garantir que seja int
         
-        # Criar selectbox
+        # Criar selectbox com opções explícitas
+        chas_options = [0.0, 1.0]
         selected_chas = st.selectbox(
             f"**CHAS** - {feature_descriptions['CHAS']}",
-            options=[0.0, 1.0],
+            options=chas_options,
             index=chas_index,
-            format_func=lambda x: "Sim" if x == 1.0 else "Não",
+            format_func=lambda x: "Sim" if float(x) == 1.0 else "Não",
             key="feature_CHAS"
         )
-        features['CHAS'] = selected_chas
+        # Garantir que o valor selecionado seja float
+        features['CHAS'] = float(selected_chas)
         
         features['NOX'] = st.slider(
             f"**NOX** - {feature_descriptions['NOX']}",
