@@ -1419,7 +1419,8 @@ def _show_dashboard_page():
     )
     
     # Substituir skeleton pelo gráfico real
-    scatter_placeholder.plotly_chart(fig_scatter, use_container_width=True)
+    scatter_placeholder.empty()
+    st.plotly_chart(fig_scatter, use_container_width=True)
     
     col1, col2, col3 = st.columns(3)
     mse_scatter = np.mean((y_true - y_pred) ** 2)
@@ -1473,7 +1474,8 @@ def _show_dashboard_page():
     )
     
     # Substituir skeleton pelo gráfico real
-    optuna_placeholder.plotly_chart(fig_optuna, use_container_width=True)
+    optuna_placeholder.empty()
+    st.plotly_chart(fig_optuna, use_container_width=True)
     
     # Importância de Hiperparâmetros com skeleton
     st.markdown("---")
@@ -1502,7 +1504,8 @@ def _show_dashboard_page():
     )
     
     # Substituir skeleton pelo gráfico real
-    importance_placeholder.plotly_chart(fig_importance, use_container_width=True)
+    importance_placeholder.empty()
+    st.plotly_chart(fig_importance, use_container_width=True)
 
 if __name__ == "__main__":
     main()
