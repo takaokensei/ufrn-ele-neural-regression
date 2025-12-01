@@ -11,10 +11,22 @@ Aplicação web interativa para demonstração do modelo de regressão neural tr
    pip install -r requirements_streamlit.txt
    ```
 
-2. **Executar a aplicação:**
+2. **Ativar ambiente virtual (Windows):**
+   ```powershell
+   .\venv\Scripts\Activate.ps1
+   ```
+   
+   **Ou (Linux/Mac):**
+   ```bash
+   source venv/bin/activate
+   ```
+
+3. **Executar a aplicação:**
    ```bash
    streamlit run streamlit_app/app.py
    ```
+   
+   **Importante:** Certifique-se de que o ambiente virtual está ativado para que o PyTorch e outras dependências estejam disponíveis.
 
 3. **Acessar no navegador:**
    - URL padrão: http://localhost:8501
@@ -33,12 +45,12 @@ Aplicação web interativa para demonstração do modelo de regressão neural tr
 
 ```
 streamlit_app/
-├── app.py              # Arquivo principal
-├── pages/              # Páginas da aplicação
-│   ├── 1_🏠_Predição.py
-│   ├── 2_📊_Métricas.py
-│   ├── 3_🔍_Análise.py
-│   └── 4_📈_Dashboard.py
+├── app.py              # Arquivo principal (aplicação centralizada)
+├── pages/              # Páginas da aplicação (não mais usadas - integradas no app.py)
+│   ├── 1_Predicao.py
+│   ├── 2_Metricas.py
+│   ├── 3_Analise.py
+│   └── 4_Dashboard.py
 ├── utils/              # Módulos utilitários
 │   ├── model_loader.py
 │   └── preprocessor.py
@@ -46,6 +58,8 @@ streamlit_app/
     └── model/
         └── best_model_fold.pth
 ```
+
+**Nota:** A aplicação agora usa `app.py` centralizado com todas as páginas integradas via navegação na sidebar.
 
 ## 🎯 Funcionalidades
 
