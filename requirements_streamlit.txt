@@ -1,0 +1,16 @@
+# Dependências para Aplicação Streamlit
+# UFRN - Neural Regression Project
+
+# Core dependencies (já no requirements.txt, mas listadas aqui para deploy)
+torch>=2.0.0
+numpy>=1.24.0
+pandas>=2.0.0
+scikit-learn>=1.3.0
+
+# Streamlit e visualizações
+streamlit>=1.28.0
+plotly>=5.17.0
+
+# Opcional: para melhor performance
+# pillow>=10.0.0  # Para manipulação de imagens se necessário
+
