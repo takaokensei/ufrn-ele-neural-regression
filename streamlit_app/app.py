@@ -186,64 +186,83 @@ def inject_custom_css():
     
     /* ========== INPUTS E SLIDERS ========== */
     
-    /* ========== SLIDERS APRIMORADOS ========== */
+    /* ========== SLIDERS PROFISSIONAIS ========== */
     
-    /* Container do slider */
+    /* Container do slider com espaçamento adequado */
     div[data-testid="stSlider"] {
-        padding: 1rem 0.5rem;
+        padding: 0.75rem 0;
+        margin: 0.5rem 0;
     }
     
-    /* Label do slider - melhor legibilidade */
+    /* Label do slider - clean e profissional */
     div[data-testid="stSlider"] label {
-        font-weight: 600 !important;
-        font-size: 0.95rem !important;
-        color: #FAFAFA !important;
-        margin-bottom: 0.8rem !important;
-        display: block !important;
-    }
-    
-    /* Track do slider (fundo cinza) */
-    div[data-testid="stSlider"] > div > div > div > div {
-        background: rgba(74, 144, 226, 0.3) !important;
-        height: 6px !important;
-        border-radius: 3px !important;
-    }
-    
-    /* Barra de progresso (parte preenchida) */
-    div[data-testid="stSlider"] > div > div > div > div > div {
-        background: linear-gradient(90deg, #4A90E2 0%, #51CF66 100%) !important;
-        height: 6px !important;
-        border-radius: 3px !important;
-        box-shadow: 0 0 10px rgba(74, 144, 226, 0.4) !important;
-    }
-    
-    /* Thumb (bolinha) do slider */
-    div[data-testid="stSlider"] > div > div > div > div > div > div {
-        background: #4A90E2 !important;
-        border: 3px solid #FFFFFF !important;
-        width: 20px !important;
-        height: 20px !important;
-        box-shadow: 0 2px 8px rgba(74, 144, 226, 0.6) !important;
-        transition: all 0.2s ease !important;
-    }
-    
-    /* Hover no thumb */
-    div[data-testid="stSlider"] > div > div > div > div > div > div:hover {
-        transform: scale(1.2) !important;
-        box-shadow: 0 4px 12px rgba(74, 144, 226, 0.8) !important;
-    }
-    
-    /* Valor do slider (número) */
-    div[data-testid="stSlider"] > div > div > div:last-child {
-        color: #4A90E2 !important;
-        font-weight: 600 !important;
+        font-weight: 500 !important;
         font-size: 0.9rem !important;
-        margin-top: 0.3rem !important;
+        color: #E0E0E0 !important;
+        margin-bottom: 0.75rem !important;
+        display: block !important;
+        letter-spacing: 0.01em !important;
     }
     
-    /* Espaçamento entre sliders */
+    /* Track do slider (trilho de fundo) */
+    div[data-testid="stSlider"] [role="slider"] {
+        background: transparent !important;
+    }
+    
+    div[data-testid="stSlider"] [data-baseweb="slider"] > div:first-child {
+        background: rgba(255, 255, 255, 0.1) !important;
+        height: 4px !important;
+        border-radius: 2px !important;
+    }
+    
+    /* Barra de progresso preenchida (antes do thumb) */
+    div[data-testid="stSlider"] [data-baseweb="slider"] > div:first-child > div:first-child {
+        background: #4A90E2 !important;
+        height: 4px !important;
+        border-radius: 2px !important;
+    }
+    
+    /* Thumb (handle) - quadrado minimalista */
+    div[data-testid="stSlider"] [role="slider"] {
+        width: 16px !important;
+        height: 16px !important;
+        background: #FFFFFF !important;
+        border: 2px solid #4A90E2 !important;
+        border-radius: 2px !important;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+        transition: all 0.15s ease !important;
+        cursor: pointer !important;
+    }
+    
+    /* Hover no thumb - feedback sutil */
+    div[data-testid="stSlider"] [role="slider"]:hover {
+        background: #4A90E2 !important;
+        border-color: #6BA3E8 !important;
+        box-shadow: 0 3px 8px rgba(74, 144, 226, 0.4) !important;
+    }
+    
+    /* Active/Dragging state */
+    div[data-testid="stSlider"] [role="slider"]:active {
+        background: #357ABD !important;
+        box-shadow: 0 2px 12px rgba(74, 144, 226, 0.6) !important;
+    }
+    
+    /* Valor numérico do slider */
+    div[data-testid="stSlider"] [data-testid="stTickBar"] {
+        color: #4A90E2 !important;
+        font-weight: 500 !important;
+        font-size: 0.85rem !important;
+    }
+    
+    /* Espaçamento vertical entre sliders */
     div[data-testid="stSlider"] + div[data-testid="stSlider"] {
-        margin-top: 1.5rem !important;
+        margin-top: 1.25rem !important;
+    }
+    
+    /* Remove estilo do thumb padrão do Streamlit */
+    div[data-testid="stSlider"] [role="slider"]::before,
+    div[data-testid="stSlider"] [role="slider"]::after {
+        display: none !important;
     }
     
     /* Labels dos inputs com melhor legibilidade */
